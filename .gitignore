@@ -1,0 +1,19 @@
+# Dipendenze (pesantissime, non vanno caricate!)
+node_modules
+.pnp
+.pnp.js
+
+# Cartelle di build (si ricreano da sole)
+dist
+dist-ssr
+*.local
+
+# Log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dati sensibili
+.env
+.DS_Store
+Thumbs.db

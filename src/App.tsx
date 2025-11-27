@@ -1,0 +1,1163 @@
+import React, { useState, useEffect, useRef } from 'react';
+
+
+// IMPORTA IL FILE CSS DI TAILWIND
+import './index.css';
+
+// @ts-ignore
+import logoLocale from './logoo.png';
+
+// @ts-ignore
+import heroLocale from './hero.webp';
+
+// @ts-ignore
+import negozioLocale from './negozio.webp';
+
+// --- Configuration ---
+const COLORS = {
+  primary: "text-blue-900",
+  primaryBg: "bg-blue-900",
+  secondary: "text-orange-500",
+  secondaryBg: "bg-orange-500",
+  secondaryHover: "hover:bg-orange-600",
+  accent: "text-cyan-500",
+  accentBg: "bg-cyan-500"
+};
+
+const LOGO_URL = logoLocale;
+const HERO_IMAGE_URL = heroLocale;
+
+// --- Types ---
+type Product = {
+    id: string | number;
+    category: string;
+    name: string;
+    price: string;
+    image: string;
+    desc: string;
+    specs: string[];
+    stock?: number;
+};
+
+// --- Sub-Components ---
+
+interface SectionTitleProps {
+    title: string;
+    subtitle?: string;
+    centered?: boolean;
+    light?: boolean;
+}
+
+const SectionTitle = ({ title, subtitle, centered = true, light = false }: SectionTitleProps) => (
+    <div className={`mb-12 reveal ${centered ? 'text-center' : 'text-left'}`}>
+        <h2 className={`text-3xl md:text-5xl font-bold mb-4 ${light ? 'text-white' : COLORS.primary}`}>
+            {title}
+        </h2>
+        <div className={`h-1.5 w-20 ${COLORS.secondaryBg} rounded-full mb-6 ${centered ? 'mx-auto' : ''}`}></div>
+        {subtitle && <p className={`text-lg ${light ? 'text-gray-300' : 'text-gray-600'} max-w-2xl ${centered ? 'mx-auto' : ''}`}>{subtitle}</p>}
+    </div>
+);
+
+// Componente per gestire il caricamento delle immagini in modo elegante
+const ProductImage = ({ src, alt, category }: { src: string, alt: string, category: string }) => {
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [hasError, setHasError] = useState(false);
+
+    return (
+        <div className="relative h-72 overflow-hidden bg-gray-200">
+            {/* 1. Placeholder Grigio con icona (visibile finché non carica) */}
+            {!isLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center text-gray-400 animate-pulse">
+                    <i className="fas fa-image text-4xl opacity-50"></i>
+                </div>
+            )}
+
+            {/* 2. L'immagine vera */}
+            <img 
+                src={hasError ? 'https://via.placeholder.com/600x400?text=No+Image' : src} 
+                alt={alt}
+                loading="lazy"
+                className={`w-full h-full object-cover transition-all duration-700 ${isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => { setHasError(true); setIsLoaded(true); }}
+            />
+
+            {/* Badge Categoria */}
+            <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-gray-700 uppercase tracking-wide shadow-sm z-10">
+                {category}
+            </div>
+
+            {/* Overlay Hover */}
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-20">
+                <span className="bg-white text-gray-900 px-6 py-2 rounded-full font-bold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    Scheda Prodotto
+                </span>
+            </div>
+        </div>
+    );
+};
+
+interface ProductModalProps {
+    product: Product | null;
+    onClose: () => void;
+}
+
+const ProductModal = ({ product, onClose }: ProductModalProps) => {
+    if (!product) return null;
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose}>
+            <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col md:flex-row relative modal-enter modal-enter-active" onClick={e => e.stopPropagation()}>
+                <button onClick={onClose} className="absolute top-4 right-4 z-10 bg-white/80 p-2 rounded-full hover:bg-gray-100">
+                    <i className="fas fa-times text-xl text-gray-800"></i>
+                </button>
+                <div className="md:w-1/2 h-64 md:h-auto bg-gray-100 relative">
+                     <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                     <div className="absolute top-4 left-4 bg-blue-900 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+                        {product.category}
+                     </div>
+                     {/* Badge Disponibilità basato su Giacenza */}
+                     {product.stock !== undefined && (
+                        <div className={`absolute bottom-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase ${product.stock > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+                            {product.stock > 0 ? 'Disponibile' : 'Su Ordinazione'}
+                        </div>
+                     )}
+                </div>
+                <div className="md:w-1/2 p-8 md:p-10 flex flex-col justify-center">
+                    <h3 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h3>
+                    <p className={`text-2xl font-bold ${COLORS.secondary} mb-6`}>{product.price}</p>
+                    <p className="text-gray-600 mb-6 leading-relaxed">{product.desc}</p>
+                    
+                    <div className="mb-8">
+                        <h4 className="font-bold text-gray-900 mb-3">Caratteristiche Tecniche:</h4>
+                        <ul className="grid grid-cols-2 gap-2">
+                            {product.specs?.map((spec: string, i: number) => (
+                                <li key={i} className="flex items-center text-sm text-gray-600">
+                                    <i className="fas fa-check text-green-500 mr-2"></i> {spec}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className="flex gap-4">
+                        <a 
+                            href="#contatti" 
+                            onClick={(e) => {
+                                onClose();
+                                smoothScroll(e, 'contatti');
+                            }}
+                            className={`flex-1 ${COLORS.secondaryBg} text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition-all cursor-pointer`}
+                        >
+                            Richiedi Disponibilità
+                        </a>
+                        <button className="px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 text-gray-600">
+                            <i className="far fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// --- Utilities ---
+const smoothScroll = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+    }
+};
+
+// --- Custom Hooks ---
+const useScrollReveal = (isLoading: boolean) => {
+    useEffect(() => {
+        // Se il sito sta ancora caricando, non avviare l'observer
+        if (isLoading) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Piccolo ritardo per assicurarsi che il DOM sia pronto
+        setTimeout(() => {
+            const elements = document.querySelectorAll('.reveal');
+            elements.forEach(el => observer.observe(el));
+        }, 100);
+
+        return () => observer.disconnect();
+    }, [isLoading]);
+};
+
+// --- Main Components ---
+
+const Navbar = () => {
+    const [scrolled, setScrolled] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const navLinks = ['Chi Siamo', 'Servizi', 'Prodotti', 'Forniture', 'Contatti'];
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 50);
+        window.addEventListener('scroll', onScroll);
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    const handleNavClick = (e: React.MouseEvent, id: string) => {
+        smoothScroll(e, id);
+        setMobileMenuOpen(false);
+    };
+
+    return (
+        <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-6'}`}>
+            <div className="container mx-auto px-6 flex justify-between items-center">
+                <a 
+                    href="#home" 
+                    onClick={(e) => handleNavClick(e, 'home')}
+                    className="flex items-center gap-3 group cursor-pointer text-decoration-none"
+                >
+                    <img 
+                        src={LOGO_URL} 
+                        alt="VE.MA Logo" 
+                        className="h-16 w-auto object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-md" 
+                    />
+                    <span className={`text-2xl font-extrabold tracking-tight ${scrolled ? COLORS.primary : 'text-white'}`}>
+                        VE.MA<span className="text-orange-500">.</span>
+                    </span>
+                </a>
+                
+                <div className="hidden lg:flex gap-8 items-center">
+                    <a 
+                        href="#home" 
+                        onClick={(e) => handleNavClick(e, 'home')}
+                        className={`font-medium text-sm tracking-wide hover:text-orange-500 transition-colors cursor-pointer ${scrolled ? 'text-gray-700' : 'text-white/90'}`}
+                    >
+                        HOME
+                    </a>
+                    {navLinks.map((item) => (
+                        <a 
+                            key={item} 
+                            href={`#${item.toLowerCase().replace(' ', '-')}`}
+                            onClick={(e) => handleNavClick(e, item.toLowerCase().replace(' ', '-'))}
+                            className={`font-medium text-sm tracking-wide hover:text-orange-500 transition-colors cursor-pointer relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-orange-500 after:left-0 after:-bottom-1 after:transition-all hover:after:w-full ${scrolled ? 'text-gray-700' : 'text-white/90'}`}
+                        >
+                            {item.toUpperCase()}
+                        </a>
+                    ))}
+                    <a 
+                        href="#contatti"
+                        onClick={(e) => handleNavClick(e, 'contatti')}
+                        className={`${COLORS.secondaryBg} text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105 transition-all duration-300 transform cursor-pointer`}
+                    >
+                        Richiedi Info
+                    </a>
+                </div>
+
+                <button 
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    className={`lg:hidden text-2xl ${scrolled ? 'text-gray-800' : 'text-white'}`}
+                >
+                    <i className={`fas ${mobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
+                </button>
+            </div>
+            
+            {/* Mobile Menu */}
+            {mobileMenuOpen && (
+                <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-xl py-6 flex flex-col items-center space-y-6 text-gray-800 font-bold border-t animate-slide-up">
+                    <a href="#home" onClick={(e) => handleNavClick(e, 'home')} className="hover:text-orange-500 text-lg">Home</a>
+                    {navLinks.map((item) => (
+                        <a 
+                            key={item} 
+                            href={`#${item.toLowerCase().replace(' ', '-')}`} 
+                            onClick={(e) => handleNavClick(e, item.toLowerCase().replace(' ', '-'))} 
+                            className="hover:text-orange-500 text-lg"
+                        >
+                            {item}
+                        </a>
+                    ))}
+                </div>
+            )}
+        </nav>
+    );
+};
+
+const Hero = () => {
+    return (
+        <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+             <div className="absolute inset-0 z-0">
+                <img 
+                    src={HERO_IMAGE_URL} 
+                    alt="Showroom Termoidraulica" 
+                    className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-blue-900/90 to-blue-900/30"></div>
+            </div>
+
+            <div className="container mx-auto px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div className="max-w-2xl text-left pt-10">
+                    <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md rounded-full px-4 py-1.5 mb-8 animate-slide-up shadow-lg">
+                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span className="text-white font-semibold text-xs tracking-wider uppercase">Il punto di riferimento a Ladispoli</span>
+                    </div>
+                    
+                    <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight animate-slide-up delay-100 drop-shadow-lg">
+                        Qualità e Scelta per la tua <br/>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-orange-400">Casa Ideale.</span>
+                    </h1>
+                    
+                    <p className="text-xl text-gray-300 mb-10 max-w-lg leading-relaxed animate-slide-up delay-200 font-light">
+                        Dal 1998, il tuo negozio di fiducia per forniture termoidrauliche. Caldaie, climatizzatori, arredo bagno e ricambi delle migliori marche.
+                    </p>
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 animate-slide-up delay-300">
+                        <a 
+                            href="#prodotti" 
+                            onClick={(e) => smoothScroll(e, 'prodotti')}
+                            className={`${COLORS.secondaryBg} hover:bg-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 flex items-center justify-center gap-3 transform hover:-translate-y-1 cursor-pointer`}
+                        >
+                            Guarda il Catalogo <i className="fas fa-arrow-right"></i>
+                        </a>
+                        <a 
+                            href="#contatti"
+                            onClick={(e) => smoothScroll(e, 'contatti')}
+                            className="bg-white/5 hover:bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-full font-bold text-lg transition-all flex items-center justify-center gap-2 hover:border-white/40 cursor-pointer"
+                        >
+                            <i className="fas fa-map-marker-alt"></i> Dove Siamo
+                        </a>
+                    </div>
+                    
+                    <div className="mt-16 flex items-center gap-10 text-white animate-slide-up delay-300 border-t border-white/10 pt-8">
+                         <div>
+                            <h3 className="text-3xl font-bold text-white">25+</h3>
+                            <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Anni Esperienza</p>
+                        </div>
+                        <div className="w-px h-12 bg-white/20"></div>
+                        <div>
+                            <h3 className="text-3xl font-bold text-white">10k+</h3>
+                            <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Prodotti</p>
+                        </div>
+                         <div className="w-px h-12 bg-white/20"></div>
+                        <div>
+                            <h3 className="text-3xl font-bold text-white">4.9</h3>
+                            <div className="flex text-orange-400 text-xs mt-1"><i className="fas fa-star"></i><i className="fas fa-star"></i><i className="fas fa-star"></i><i className="fas fa-star"></i><i className="fas fa-star"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="hidden lg:block relative animate-slide-up delay-200">
+                    <div className="relative z-10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl border border-white/20 p-8 rounded-3xl shadow-2xl max-w-md ml-auto animate-float">
+                        <div className="flex justify-between items-start mb-6">
+                             <div>
+                                <h4 className="text-white font-bold text-lg">Vendita & Assistenza</h4>
+                                <p className="text-gray-400 text-xs">I migliori brand del settore</p>
+                             </div>
+                             <div className="bg-orange-500/20 p-2 rounded-lg"><i className="fas fa-tags text-orange-400"></i></div>
+                        </div>
+                        <div className="space-y-4">
+                            <div className="bg-white/5 rounded-xl p-3 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400"><i className="fas fa-fire"></i></div>
+                                <div><p className="text-white text-sm font-bold">Riscaldamento</p><p className="text-gray-500 text-xs">Caldaie e Pompe di Calore</p></div>
+                            </div>
+                            <div className="bg-white/5 rounded-xl p-3 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><i className="fas fa-snowflake"></i></div>
+                                <div><p className="text-white text-sm font-bold">Climatizzazione</p><p className="text-gray-500 text-xs">Monosplit e Multisplit</p></div>
+                            </div>
+                        </div>
+                        <div className="mt-6 pt-6 border-t border-white/10">
+                             <div className="flex justify-between text-xs text-gray-400 mb-2"><span>Disponibilità Prodotti</span><span>Immediata</span></div>
+                             <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-green-400 to-emerald-500 w-[90%]"></div></div>
+                        </div>
+                    </div>
+                    
+                     <div className="absolute -bottom-12 -left-4 z-20 bg-white text-gray-800 p-5 rounded-2xl shadow-xl max-w-xs animate-float animation-delay-2000">
+                         <div className="flex items-center gap-4">
+                            <div className="bg-blue-100 p-3 rounded-full text-blue-600">
+                                <i className="fas fa-check-double text-xl"></i>
+                            </div>
+                            <div>
+                                <span className="font-bold block text-sm">Rivenditore Autorizzato</span>
+                                <span className="text-xs text-gray-500">Garanzia Ufficiale</span>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const Brands = () => {
+    const BRANDS = ["Vaillant", "Daikin", "Immergas", "Samsung", "Grohe", "Geberit", "Ariston", "Mitsubishi"];
+    return (
+        <section className="py-8 bg-blue-900 border-t border-blue-800 overflow-hidden">
+            <div className="container mx-auto px-6 mb-4">
+                <p className="text-center text-blue-300 text-sm font-bold uppercase tracking-widest">I nostri partner commerciali</p>
+            </div>
+            <div className="relative flex overflow-x-hidden">
+                <div className="py-2 animate-marquee whitespace-nowrap flex gap-16 px-6">
+                    {BRANDS.map((brand, i) => (
+                        <span key={i} className="text-2xl md:text-3xl font-bold text-white/40 hover:text-white transition-colors cursor-default">{brand}</span>
+                    ))}
+                    {BRANDS.map((brand, i) => (
+                        <span key={`dup-${i}`} className="text-2xl md:text-3xl font-bold text-white/40 hover:text-white transition-colors cursor-default">{brand}</span>
+                    ))}
+                </div>
+                <div className="absolute top-0 py-2 animate-marquee2 whitespace-nowrap flex gap-16 px-6">
+                    {BRANDS.map((brand, i) => (
+                        <span key={`dup2-${i}`} className="text-2xl md:text-3xl font-bold text-white/40 hover:text-white transition-colors cursor-default">{brand}</span>
+                    ))}
+                     {BRANDS.map((brand, i) => (
+                        <span key={`dup3-${i}`} className="text-2xl md:text-3xl font-bold text-white/40 hover:text-white transition-colors cursor-default">{brand}</span>
+                    ))}
+                </div>
+            </div>
+            <style>{`
+                .animate-marquee { animation: marquee 25s linear infinite; }
+                .animate-marquee2 { animation: marquee2 25s linear infinite; }
+                @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
+                @keyframes marquee2 { 0% { transform: translateX(100%); } 100% { transform: translateX(0%); } }
+            `}</style>
+        </section>
+    );
+};
+
+const About = () => {
+    return (
+        <section id="chi-siamo" className="py-24 bg-white overflow-hidden">
+            <div className="container mx-auto px-6">
+                <div className="flex flex-col lg:flex-row items-center gap-16">
+                    <div className="lg:w-1/2 relative reveal">
+                        <div className="absolute -top-10 -left-10 w-40 h-40 bg-orange-100 rounded-full mix-blend-multiply filter blur-2xl opacity-70"></div>
+                        <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-100 rounded-full mix-blend-multiply filter blur-2xl opacity-70"></div>
+                        <img 
+                            src={negozioLocale} 
+                            alt="VE.MA Showroom" 
+                            className="relative rounded-3xl shadow-2xl z-10 w-full object-cover h-[500px]"
+                        />
+                        <div className="absolute -bottom-6 -right-6 z-20 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 max-w-xs hidden md:block">
+                            <p className="font-serif italic text-gray-600 text-lg">"La qualità dei materiali fa la differenza nel tempo."</p>
+                        </div>
+                    </div>
+                    <div className="lg:w-1/2 reveal">
+                        <SectionTitle title="La Nostra Storia" subtitle="Il tuo partner di fiducia a Ladispoli." centered={false} />
+                        
+                        <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                            Fondata nel 1998, <strong>Termoidraulica VE.MA</strong> è il punto vendita di riferimento a Ladispoli e nel litorale romano per chi cerca prodotti termoidraulici di alta qualità.
+                        </p>
+                        <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                            Siamo specializzati esclusivamente nella <strong>vendita</strong> di forniture civili e industriali. Che tu sia un professionista, un installatore o un privato amante del fai-da-te, nel nostro showroom troverai competenza, cortesia e un magazzino sempre fornito.
+                        </p>
+                        
+                        <div className="grid grid-cols-2 gap-6 mb-8">
+                            <div className="flex items-start gap-3">
+                                <div className="bg-green-100 p-2 rounded-lg text-green-600"><i className="fas fa-check-circle text-xl"></i></div>
+                                <div>
+                                    <h5 className="font-bold text-gray-800">Solo Migliori Marche</h5>
+                                    <p className="text-sm text-gray-500">Rivenditori ufficiali dei top brand.</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                                <div className="bg-blue-100 p-2 rounded-lg text-blue-600"><i className="fas fa-user-shield text-xl"></i></div>
+                                <div>
+                                    <h5 className="font-bold text-gray-800">Consulenza Dedicata</h5>
+                                    <p className="text-sm text-gray-500">Ti aiutiamo a scegliere bene.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div className="border-t pt-8 border-gray-100 flex gap-12">
+                            <div>
+                                <span className="block text-3xl font-bold text-blue-900">100%</span>
+                                <span className="text-sm text-gray-500">Soddisfazione</span>
+                            </div>
+                            <div>
+                                <span className="block text-3xl font-bold text-blue-900">24h</span>
+                                <span className="text-sm text-gray-500">Reperibilità Ricambi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const Services = () => {
+    const SERVICES = [
+        { icon: "fa-store", title: "Ampio Showroom", desc: "Vieni a toccare con mano la qualità dei nostri prodotti nel nostro punto vendita di Ladispoli." },
+        { icon: "fa-comments", title: "Consulenza Tecnica", desc: "I nostri esperti al banco ti guideranno nella scelta del prodotto migliore per le tue esigenze." },
+        { icon: "fa-boxes-stacked", title: "Magazzino Ricambi", desc: "Vasto assortimento di ricambi originali per caldaie, rubinetteria e cassette di scarico." },
+        { icon: "fa-truck-ramp-box", title: "Forniture Cantieri", desc: "Listini dedicati e gestione ordini per installatori, imprese edili e professionisti del settore." }
+    ];
+    return (
+        <section id="servizi" className="py-24 bg-slate-50 relative">
+            <div className="container mx-auto px-6 relative z-10">
+                <SectionTitle 
+                    title="Cosa Offriamo" 
+                    subtitle="Un'esperienza di acquisto completa: dalla scelta del prodotto alla fornitura dei ricambi."
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {SERVICES.map((service, idx) => (
+                        <div key={idx} className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-300 group border border-gray-100 reveal hover:-translate-y-2 cursor-default">
+                            <div className={`w-16 h-16 ${COLORS.primaryBg} rounded-2xl flex items-center justify-center text-white text-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-lg shadow-blue-900/20`}>
+                                <i className={`fas ${service.icon}`}></i>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">{service.title}</h3>
+                            <p className="text-gray-600 leading-relaxed text-sm mb-4">
+                                {service.desc}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const Catalog = ({ products }: { products: Product[] }) => {
+    const [activeCat, setActiveCat] = useState("Tutti");
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    
+    // --- MODIFICA 1: Due stati per la ricerca ---
+    const [inputValue, setInputValue] = useState(""); // Quello che scrivi (veloce)
+    const [searchQuery, setSearchQuery] = useState(""); // Quello che filtra (ritardato)
+
+    const [visibleCount, setVisibleCount] = useState(12);
+
+    // --- MODIFICA 2: Il "Debounce" (Timer) ---
+    useEffect(() => {
+        // Imposta un timer di 300ms (0.3 secondi)
+        const timer = setTimeout(() => {
+            setSearchQuery(inputValue);
+        }, 300);
+
+        // Se l'utente scrive ancora prima che scada il tempo, cancella il timer vecchio
+        return () => clearTimeout(timer);
+    }, [inputValue]);
+
+    // Generazione Categorie
+    const uniqueCategories = [...new Set(products.map(p => p.category))];
+    uniqueCategories.sort();
+    const categories = ["Tutti", ...uniqueCategories];
+
+    // Filtro (Usa searchQuery, cioè il valore ritardato)
+    const filteredProducts = products.filter(product => {
+        const matchesCategory = activeCat === "Tutti" || product.category === activeCat;
+
+        if (!searchQuery.trim()) return matchesCategory;
+
+        const searchTerms = searchQuery.toLowerCase().trim().split(/\s+/);
+        const productDataString = `
+            ${product.name} 
+            ${product.id} 
+            ${product.category} 
+            ${product.desc} 
+            ${product.specs ? product.specs.join(" ") : ""}
+        `.toLowerCase();
+
+        const matchesSearch = searchTerms.every(term => productDataString.includes(term));
+
+        return matchesCategory && matchesSearch;
+    });
+
+    const visibleProducts = filteredProducts.slice(0, visibleCount);
+
+    useEffect(() => {
+        setVisibleCount(12);
+    }, [activeCat, searchQuery]);
+
+    const handleLoadMore = () => {
+        setVisibleCount(prev => prev + 12);
+    };
+
+    return (
+        <section id="prodotti" className="py-24 bg-white">
+            <style>{`
+                @keyframes simpleFadeIn {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .product-enter {
+                    animation: simpleFadeIn 0.5s ease-out forwards;
+                }
+            `}</style>
+
+            <div className="container mx-auto px-6">
+                <div className="flex flex-col lg:flex-row justify-between items-end mb-8 reveal gap-6">
+                    
+                    {/* SINISTRA */}
+                    <div className="w-full lg:w-1/2">
+                        <h2 className={`text-4xl font-bold ${COLORS.primary} mb-2`}>Il Nostro Catalogo</h2>
+                        <p className="text-gray-600 mb-6">
+                            {filteredProducts.length} prodotti trovati
+                        </p>
+                        
+                        <div className="relative w-full">
+                            {/* MODIFICA 3: L'input controlla 'inputValue', non 'searchQuery' */}
+                            <input 
+                                type="text" 
+                                placeholder="Cerca (es. 'Galleggiante', 'Geberit 7300', 'Caldaia 24kw')..." 
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm text-gray-700"
+                            />
+                            
+                            {/* Icona Caricamento mentre scrivi (Feedback visivo) */}
+                            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                {inputValue !== searchQuery ? (
+                                    <i className="fas fa-spinner fa-spin text-blue-500"></i>
+                                ) : (
+                                    <i className="fas fa-search text-lg"></i>
+                                )}
+                            </div>
+
+                            {inputValue && (
+                                <button 
+                                    onClick={() => setInputValue("")}
+                                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {/* DESTRA (Select Categorie - Rimasto uguale) */}
+                    <div className="w-full lg:w-1/3 flex items-center gap-3">
+                        <div className="relative w-full">
+                            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-900 pointer-events-none">
+                                <i className="fas fa-filter"></i>
+                            </div>
+                            <select 
+                                value={activeCat}
+                                onChange={(e) => setActiveCat(e.target.value)}
+                                className="w-full appearance-none bg-white border border-gray-300 text-gray-700 py-3 pl-12 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 cursor-pointer shadow-sm font-medium"
+                            >
+                                {categories.map(cat => (
+                                    <option key={cat} value={cat}>
+                                        {cat === "Tutti" ? "Tutte le Categorie" : cat}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
+                                <i className="fas fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+
+                        {activeCat !== "Tutti" && (
+                            <button 
+                                onClick={() => setActiveCat("Tutti")}
+                                className="bg-red-50 hover:bg-red-100 text-red-500 p-3 rounded-xl border border-red-200 transition-colors flex-shrink-0"
+                                title="Annulla Filtro Categoria"
+                            >
+                                <i className="fas fa-times"></i>
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {/* GRIGLIA PRODOTTI */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="catalog">
+                    {visibleProducts.length > 0 ? (
+                        visibleProducts.map((product) => (
+                            <div key={product.id} className="product-enter group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer" onClick={() => setSelectedProduct(product)}>
+                                
+                                <ProductImage 
+                                    src={product.image} 
+                                    alt={product.name} 
+                                    category={product.category} 
+                                />
+
+                                <div className="p-8">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h3 className="text-xl font-bold text-gray-800 group-hover:text-blue-900 transition-colors line-clamp-1">{product.name}</h3>
+                                        <span className={`${COLORS.secondary} font-bold text-lg whitespace-nowrap`}>{product.price}</span>
+                                    </div>
+                                    
+                                    <p className="text-xs text-gray-400 mb-2 font-mono">Cod: {product.id}</p>
+
+                                    <p className="text-gray-500 text-sm mb-6 line-clamp-2">
+                                        {product.desc}
+                                    </p>
+                                    <div className="flex items-center text-sm font-semibold text-blue-900 group-hover:translate-x-2 transition-transform">
+                                        Dettagli <i className="fas fa-arrow-right ml-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="col-span-full text-center py-16 bg-gray-50 rounded-3xl border border-dashed border-gray-300">
+                            <div className="text-gray-300 text-6xl mb-4"><i className="fas fa-search"></i></div>
+                            <h3 className="text-xl font-bold text-gray-800 mb-2">Nessun prodotto trovato</h3>
+                            <p className="text-gray-500">
+                                Non abbiamo trovato risultati per "{inputValue}" 
+                                {activeCat !== "Tutti" && <span> nella categoria "<strong>{activeCat}</strong>"</span>}.
+                                <br/>Prova a cercare un termine più generico.
+                            </p>
+                            <button 
+                                onClick={() => {setInputValue(""); setSearchQuery(""); setActiveCat("Tutti");}}
+                                className="mt-6 text-blue-600 font-bold hover:underline"
+                            >
+                                Resetta Filtri
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {visibleCount < filteredProducts.length && (
+                    <div className="mt-16 text-center">
+                        <button 
+                            onClick={handleLoadMore}
+                            className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-orange-500 hover:text-orange-500 px-8 py-3 rounded-full font-bold transition-all duration-300 shadow-sm"
+                        >
+                            Carica altri prodotti ({filteredProducts.length - visibleCount} rimanenti)
+                        </button>
+                    </div>
+                )}
+            </div>
+            <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+        </section>
+    );
+};
+
+const FornitureSection = () => {
+    return (
+        <section id="forniture" className="py-24 bg-slate-900 text-white relative">
+             <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+            <div className="container mx-auto px-6 relative z-10">
+                <SectionTitle title="Forniture & Partner" subtitle="Servizi dedicati a Installatori, Architetti e Imprese Edili." centered={true} light={true} />
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16 reveal">
+                    <div>
+                         <h3 className="text-3xl font-bold mb-6">Area Professionisti</h3>
+                         <p className="text-gray-300 text-lg mb-8 leading-relaxed">
+                             Sappiamo quanto è importante avere un partner affidabile in cantiere. Per questo offriamo servizi dedicati ai professionisti del settore termoidraulico.
+                         </p>
+                         <ul className="space-y-4 mb-8">
+                             <li className="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                                 <div className="bg-orange-500 w-10 h-10 rounded-full flex items-center justify-center font-bold"><i className="fas fa-percent"></i></div>
+                                 <div><h5 className="font-bold">Listini Riservati</h5><p className="text-sm text-gray-400">Sconti dedicati per possessori di Partita IVA.</p></div>
+                             </li>
+                             <li className="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                                 <div className="bg-blue-500 w-10 h-10 rounded-full flex items-center justify-center font-bold"><i className="fas fa-truck-pickup"></i></div>
+                                 <div><h5 className="font-bold">Consegna in Cantiere</h5><p className="text-sm text-gray-400">Portiamo il materiale direttamente dove lavori.</p></div>
+                             </li>
+                             <li className="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                                 <div className="bg-green-500 w-10 h-10 rounded-full flex items-center justify-center font-bold"><i className="fab fa-whatsapp"></i></div>
+                                 <div><h5 className="font-bold">Ordini Rapidi WhatsApp</h5><p className="text-sm text-gray-400">Invia la lista e ti prepariamo tutto per il ritiro.</p></div>
+                             </li>
+                         </ul>
+                         <a 
+                            href="#contatti"
+                            onClick={(e) => smoothScroll(e, 'contatti')} 
+                            className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full transition-colors cursor-pointer"
+                         >
+                             Richiedi Accesso Area Pro
+                         </a>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <img src="https://images.unsplash.com/photo-1533630762944-998592395d85?auto=format&fit=crop&q=80&w=600" className="rounded-2xl transform translate-y-8" alt="Cantiere 1" />
+                        <img src="https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&q=80&w=600" className="rounded-2xl" alt="Cantiere 2" />
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=600" className="rounded-2xl transform translate-y-8" alt="Cantiere 3" />
+                        <div className="bg-blue-800 rounded-2xl flex items-center justify-center p-6 text-center">
+                            <div>
+                                <h4 className="text-4xl font-bold mb-2">500+</h4>
+                                <p className="text-sm text-blue-300">Cantieri Forniti</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const Testimonials = () => {
+    const TESTIMONIALS = [
+        { name: "Marco Rossi", role: "Cliente Privato", text: "Cercavo una caldaia specifica e da VE.MA l'ho trovata subito disponibile. Prezzo competitivo e ottimi consigli al banco.", rating: 5, img: "https://randomuser.me/api/portraits/men/32.jpg" },
+        { name: "Elena Bianchi", role: "Architetto", text: "Il mio punto di riferimento a Ladispoli per l'arredo bagno. Showroom curato e personale che sa capire le esigenze di design.", rating: 5, img: "https://randomuser.me/api/portraits/women/44.jpg" },
+        { name: "Giuseppe Verdi", role: "Idraulico", text: "Mi rifornisco qui da anni per i miei lavori. Hanno sempre tutto quello che serve e se manca qualcosa la ordinano in tempi record.", rating: 5, img: "https://randomuser.me/api/portraits/men/85.jpg" },
+    ];
+    return (
+        <section className="py-24 bg-blue-50">
+            <div className="container mx-auto px-6">
+                 <SectionTitle title="Dicono di Noi" subtitle="La soddisfazione di chi sceglie VE.MA per i propri acquisti." centered={true} />
+                 
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                     {TESTIMONIALS.map((t, i) => (
+                         <div key={i} className="bg-white p-8 rounded-3xl shadow-lg border border-blue-100 reveal">
+                             <div className="flex text-yellow-400 mb-4 text-sm">
+                                {[...Array(t.rating)].map((_, i) => <i key={i} className="fas fa-star"></i>)}
+                             </div>
+                             <p className="text-gray-600 italic mb-6 leading-relaxed">"{t.text}"</p>
+                             <div className="flex items-center gap-4">
+                                 <img src={t.img} alt={t.name} className="w-12 h-12 rounded-full object-cover" />
+                                 <div>
+                                     <h5 className="font-bold text-gray-900 text-sm">{t.name}</h5>
+                                     <p className="text-xs text-gray-500">{t.role}</p>
+                                 </div>
+                             </div>
+                         </div>
+                     ))}
+                 </div>
+            </div>
+        </section>
+    );
+};
+
+const FAQ = () => {
+    const [openIndex, setOpenIndex] = useState(0);
+    const FAQS = [
+        { q: "Effettuate installazioni?", a: "No, siamo un negozio di vendita prodotti. Possiamo però consigliarti i materiali migliori per il tuo installatore di fiducia." },
+        { q: "Fate consegne a domicilio?", a: "No, non effettuiamo consegne di materiali." },
+        { q: "Avete pezzi di ricambio?", a: "Assolutamente sì. Disponiamo di un magazzino ricambi molto fornito per le principali marche di caldaie e rubinetteria." },
+        { q: "Quali sono gli orari del negozio?", a: "Siamo aperti dal Lunedì al Venerdì, 08:15 - 13:00 e 15 - 18:30. Chiusi il Sabato ela Domenica." },
+    ];
+
+    return (
+        <section className="py-24 bg-white">
+            <div className="container mx-auto px-6 max-w-4xl">
+                <SectionTitle title="Domande Frequenti" centered={true} />
+                
+                <div className="space-y-4 reveal">
+                    {FAQS.map((faq, idx) => (
+                        <div key={idx} className="border border-gray-200 rounded-2xl overflow-hidden">
+                            <button 
+                                onClick={() => setOpenIndex(openIndex === idx ? -1 : idx)}
+                                className="w-full flex justify-between items-center p-6 bg-white hover:bg-gray-50 transition-colors text-left"
+                            >
+                                <span className="font-bold text-gray-800 text-lg">{faq.q}</span>
+                                <i className={`fas fa-chevron-down transition-transform duration-300 ${openIndex === idx ? 'rotate-180 text-orange-500' : 'text-gray-400'}`}></i>
+                            </button>
+                            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openIndex === idx ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                <div className="p-6 pt-0 text-gray-600 bg-white border-t border-gray-100">
+                                    {faq.a}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const Contact = () => {
+    const formRef = useRef<HTMLFormElement>(null);
+    const [isSending, setIsSending] = useState(false);
+    const [feedbackMsg, setFeedbackMsg] = useState("");
+
+    const sendEmail = (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSending(true);
+        setFeedbackMsg("");
+
+        // NOTA: Installa la libreria @emailjs/browser e usa i tuoi codici reali qui sotto
+        //const SERVICE_ID = "TUO_SERVICE_ID";
+        //const TEMPLATE_ID = "TUO_TEMPLATE_ID";
+        //const PUBLIC_KEY = "TUA_PUBLIC_KEY";
+
+        // Simulazione invio (Rimuovi questo e usa emailjs.sendForm quando sei pronto)
+        if (formRef.current) {
+            // emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current, PUBLIC_KEY)...
+            setTimeout(() => {
+                setIsSending(false);
+                setFeedbackMsg("Messaggio inviato! (Configura EmailJS per renderlo reale)");
+            }, 1500);
+        }
+    };
+
+    return (
+        <section id="contatti" className="py-24 bg-slate-900 text-white relative overflow-hidden">
+             <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-overlay filter blur-[100px] opacity-20 animate-blob"></div>
+             <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-500 rounded-full mix-blend-overlay filter blur-[100px] opacity-20 animate-blob animation-delay-2000"></div>
+
+            <div className="container mx-auto px-6 relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                    <div className="reveal">
+                        <h4 className="text-orange-500 font-bold uppercase tracking-wider mb-2">Contattaci</h4>
+                        <h2 className="text-4xl md:text-5xl font-bold mb-6">Siamo a Ladispoli.</h2>
+                        <p className="text-gray-300 mb-10 text-lg leading-relaxed">
+                            Passa a trovarci in negozio per una consulenza personalizzata o richiedi informazioni online.
+                        </p>
+                        
+                        <div className="space-y-6 mb-10">
+                            <div className="flex items-center gap-6 group">
+                                <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-orange-500 text-2xl group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
+                                    <i className="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-400 mb-1">Punto Vendita</p>
+                                    <p className="font-bold text-xl">Via delle Magnolie, 21, 00055 Ladispoli (RM)</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-6 group">
+                                <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-orange-500 text-2xl group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
+                                    <i className="fas fa-phone-alt"></i>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-400 mb-1">Telefono</p>
+                                    <p className="font-bold text-xl">+39 338 261 1291</p>
+                                </div>
+                            </div>
+                             <div className="flex items-center gap-6 group">
+                                <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-orange-500 text-2xl group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
+                                    <i className="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-400 mb-1">Email</p>
+                                    <p className="font-bold text-xl">max69vema@yahoo.it</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Opening Hours Card */}
+                        <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-sm">
+                            <h4 className="font-bold text-lg mb-4 flex items-center gap-2"><i className="far fa-clock text-orange-500"></i> Orari di Apertura</h4>
+                            <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
+                                <div>
+                                    <span className="block font-bold text-white">Lun - Ven</span>
+                                    <span>08:30 - 13:00</span><br/>
+                                    <span>15:30 - 19:30</span>
+                                </div>
+                                <div>
+                                    <span className="block font-bold text-white">Sabato</span>
+                                    <span>08:30 - 13:00</span><br/>
+                                    <span className="text-orange-400">Pomeriggio Chiuso</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-6 reveal">
+                         {/* Map Integration */}
+                        <div className="w-full h-80 bg-slate-800 rounded-3xl overflow-hidden relative group shadow-2xl border border-white/10">
+                            <iframe 
+                                width="100%" 
+                                height="100%" 
+                                title="Mappa Termoidraulica VE.MA"
+                                src="https://maps.google.com/maps?q=Termoidraulica+VE.MA.+Via+delle+Magnolie,+21,+00055+Ladispoli+RM&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                                style={{border:0, filter: 'grayscale(0.2) contrast(1.1)'}} 
+                                allowFullScreen 
+                                loading="lazy"
+                            ></iframe>
+                            <a 
+                                href="https://www.google.com/maps/dir//Via+delle+Magnolie,+21,+00055+Ladispoli+RM" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="absolute bottom-4 right-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg flex items-center gap-2 transition-all hover:scale-105"
+                            >
+                                <i className="fas fa-directions"></i> Ottieni Indicazioni
+                            </a>
+                        </div>
+
+                        <div className="bg-white rounded-3xl p-8 md:p-10 text-gray-800 shadow-2xl">
+                            <h3 className="text-2xl font-bold mb-6 text-blue-900">Scrivici un Messaggio</h3>
+                            <form ref={formRef} onSubmit={sendEmail} className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <input type="text" name="user_name" required placeholder="Nome" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                    <input type="text" name="user_surname" placeholder="Cognome" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                </div>
+                                <input type="email" name="user_email" required placeholder="Email" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                <select name="user_type" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-600">
+                                    <option value="Privato">Sono un Privato</option>
+                                    <option value="Installatore">Sono un Installatore</option>
+                                    <option value="Impresa">Sono un'Impresa</option>
+                                </select>
+                                <textarea name="message" required rows={3} placeholder="Come possiamo aiutarti?" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                
+                                <button 
+                                    type="submit" 
+                                    disabled={isSending}
+                                    className={`w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-orange-500/30 ${isSending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                >
+                                    {isSending ? 'Invio in corso...' : 'Invia Messaggio'}
+                                </button>
+
+                                {/* Messaggio di Feedback */}
+                                {feedbackMsg && (
+                                    <p className={`text-center text-sm font-bold mt-2 ${feedbackMsg.includes("Errore") ? "text-red-500" : "text-green-600"}`}>
+                                        {feedbackMsg}
+                                    </p>
+                                )}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const Footer = () => {
+    const PRIVACY_URL = "https://www.iubenda.com/privacy-policy/56603988";
+    const COOKIE_URL = "https://www.iubenda.com/privacy-policy/56603988/cookie-policy";
+
+    return (
+        <footer className="bg-slate-950 text-slate-400 py-16 border-t border-white/5">
+            <div className="container mx-auto px-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                    
+                    {/* 1. LOGO E SOCIAL */}
+                    <div>
+                        <div className="flex items-center gap-3 mb-6">
+                             <img src={LOGO_URL} alt="VE.MA Logo" className="h-16 w-auto object-contain" />
+                             <span className="text-2xl font-bold text-white">VE.MA<span className="text-orange-500">.</span></span>
+                        </div>
+                        <p className="text-sm leading-relaxed mb-6">
+                            Il tuo negozio di termoidraulica a Ladispoli. Dal 1998 offriamo vendita e consulenza per riscaldamento, condizionamento e arredo bagno.
+                        </p>
+                        <div className="flex gap-4">
+                            <a href="#" onClick={e => e.preventDefault()} className="w-10 h-10 rounded-full bg-white/5 hover:bg-orange-500 hover:text-white flex items-center justify-center transition-all duration-300"><i className="fab fa-facebook-f"></i></a>
+                            <a href="#" onClick={e => e.preventDefault()} className="w-10 h-10 rounded-full bg-white/5 hover:bg-orange-500 hover:text-white flex items-center justify-center transition-all duration-300"><i className="fab fa-instagram"></i></a>
+                            <a href="#" onClick={e => e.preventDefault()} className="w-10 h-10 rounded-full bg-white/5 hover:bg-orange-500 hover:text-white flex items-center justify-center transition-all duration-300"><i className="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    
+                    {/* 2. MENU RAPIDO */}
+                    <div>
+                        <h4 className="text-white font-bold mb-6 text-lg">Menu Rapido</h4>
+                        <ul className="space-y-3 text-sm">
+                            <li><a href="#home" onClick={(e) => smoothScroll(e, 'home')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Home</a></li>
+                            <li><a href="#chi-siamo" onClick={(e) => smoothScroll(e, 'chi-siamo')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Chi Siamo</a></li>
+                            <li><a href="#servizi" onClick={(e) => smoothScroll(e, 'servizi')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Cosa Offriamo</a></li>
+                            <li><a href="#prodotti" onClick={(e) => smoothScroll(e, 'prodotti')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Prodotti</a></li>
+                            <li><a href="#forniture" onClick={(e) => smoothScroll(e, 'forniture')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Forniture</a></li>
+                        </ul>
+                    </div>
+
+                    {/* 3. INFORMAZIONI LEGALI */}
+                    <div>
+                        <h4 className="text-white font-bold mb-6 text-lg">Informazioni Legali</h4>
+                        <ul className="space-y-3 text-sm">
+                            <li>
+                                <a 
+                                    href={PRIVACY_URL}
+                                    className="iubenda-white iubenda-noiframe iubenda-embed iubenda-noiframe hover:text-orange-500 transition-colors text-left flex items-center gap-2"
+                                    title="Privacy Policy"
+                                >
+                                    <i className="fas fa-shield-alt"></i> Privacy Policy
+                                </a>
+                            </li>
+                            <li>
+                                <a 
+                                    href={COOKIE_URL}
+                                    className="iubenda-white iubenda-noiframe iubenda-embed iubenda-noiframe hover:text-orange-500 transition-colors text-left flex items-center gap-2"
+                                    title="Cookie Policy"
+                                >
+                                    <i className="fas fa-cookie-bite"></i> Cookie Policy
+                                </a>
+                            </li>
+                            <li className="pt-6 border-t border-white/10 mt-4">
+                                <span className="block text-xs text-gray-500 uppercase tracking-widest mb-1">Dati Societari</span>
+                                <span className="block text-xs text-gray-400">P.IVA: 15349091007</span>
+                                <span className="block text-xs text-gray-400">Cap. Soc. € 1.000,00 i.v.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* 4. CONTATTI RAPIDI */}
+                    <div>
+                        <h4 className="text-white font-bold mb-6 text-lg">Contatti Rapidi</h4>
+                        <div className="space-y-4 text-sm">
+                            <div className="flex items-start gap-3">
+                                <i className="fas fa-map-marker-alt text-orange-500 mt-1"></i>
+                                <span>Via delle Magnolie 21,<br/>00055 Ladispoli (RM)</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <i className="fas fa-phone text-orange-500"></i>
+                                <span>+39 338 261 1291</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <i className="fas fa-envelope text-orange-500"></i>
+                                <span>max69vema@yahoo.it</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <i className="fas fa-clock text-orange-500"></i>
+                                <span>Lun-Ven: 08:30-13:00 / 15:30-19:30</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+                    <p>© 2024 TERMOIDRAULICA VE.MA. SRLS - Tutti i diritti riservati.</p>
+                    <p className="hidden md:block">Made with <i className="fas fa-heart text-red-500 mx-1"></i> in Italy</p>
+                </div>
+            </div>
+        </footer>
+    );
+};
+
+// --- COMPONENTE APP AGGIORNATO ---
+const App = () => {
+    // Rimuoviamo 'isLoading' dall'hook perché ora il sito parte subito
+    useScrollReveal(false); 
+
+    const [products, setProducts] = useState<Product[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        // 1. CARICAMENTO ISTANTANEO (File Lite con primi 24 prodotti)
+        fetch('/products_lite.json')
+            .then(response => response.json())
+            .then(liteData => {
+                setProducts(liteData); // Mostra subito i primi prodotti!
+                setIsLoading(false);   // Toglie la rotellina immediatamente
+
+                // 2. CARICAMENTO BACKGROUND (File Completo con tutti i 14.000 prodotti)
+                // Parte solo dopo che l'utente ha già visto la prima schermata
+                fetch('/products.json')
+                    .then(response => response.json())
+                    .then(fullData => {
+                        // Aggiorna silenziosamente la lista completa
+                        setProducts(fullData); 
+                    })
+                    .catch(error => console.error("Errore caricamento full:", error));
+            })
+            .catch(error => {
+                console.error("Errore caricamento lite:", error);
+                // Fallback di sicurezza: se fallisce il lite, prova il full classico
+                fetch('/products.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        setProducts(data);
+                        setIsLoading(false);
+                    });
+            });
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-blue-900 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-500">Caricamento Catalogo...</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="font-sans text-gray-900 bg-slate-50 min-h-screen">
+            <Navbar />
+            <Hero />
+            <Brands />
+            <About />
+            <Services />
+            
+            <Catalog products={products} />
+            
+            <FornitureSection />
+            <Testimonials />
+            <FAQ />
+            <Contact />
+            
+            <Footer />
+        </div>
+    );
+};
+export default App;

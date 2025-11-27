@@ -1,0 +1,595 @@
+Codice;Descrizione
+A;Meccanismi di scarico
+A01;Cassette incasso GEBERIT
+A02;Moduli fix GEBERIT
+A03;Cassette a zaino GEBERIT
+A04;Placche e canotti GEBERIT
+A05;Dispositivi per cassette GEBERIT
+A06;Ricambi per cassette GEBERIT
+A07;Rubinetti a galleggiante GEBERIT
+A08;Pilette e sifoni doccia-vasca GEBERIT
+A09;Sifoni e canaline GEBERIT
+A10;Cassette incasso e placche GROHE
+A11;Ricambi per cassette GROHE
+A12;Cassette a zaino CR
+A13;Ricambi per cassette CR
+A14;Cassette a zaino PUCCI
+A15;Cassette incasso PUCCI
+A16;Placche per cassette incasso PUCCI
+A18;Ricambi per cassetta PUCCI
+A19;Cassette incasso e placche OLI
+A20;Cassette a zaino OLI
+A21;Ricambi per cassette OLI
+A22;Cassette a zaino KARIBA
+A23;Ricambi per cassette KARIBA
+A24;Cassette a zaino SCHWAB
+A25;Cassette incasso e placche SCHWAB
+A26;Ricambi per cassette SCHWAB
+A27;Rubinetti a galleggiante per cassette
+A28;Tubi di cacciata in ottone per sistemi di scarico
+A29;Tubi di cacciata in PVC per sistemi di scarico
+A30;Batterie per cassette di scarico FLUIDMASTER
+A31;Batterie PVC per cassette di scarico MBL
+A32;Batterie ottone per cassette di scarico MBL
+A33;Ricambi per batterie ottone
+A34;Batterie di scarico CATIS
+A35;Ricambi per batteria CATIS
+A36;Batterie di scarico tipo CATIS
+A37;Ricambi per batteria tipo CATIS
+A38;Valvole per cassette OLI
+A39;Ricambi per valvole OLI
+A40;Cartucce Pneumatiche
+B;Arredo bagno
+B01;Sedile wc in Abs-Termoplastico
+B02;Sedile Colato
+B03;Sedile wc Termoindurente
+B04;Sedile wc Mdf Poliesterato
+B05;Cerniere di ricambio per sedili wc
+B06;Paracolpi di ricambio per sedili wc
+B07;Accessori bagno Ideal Star
+B08;Accessori bagno ottone Gedy
+B09;Ricambi per accessori bagno Gedy
+B10;Accessori bagno abs e durolite Gedy
+B11;Accesori bagno abs e durolite Saniplast
+B12;Accessori bagno Bella
+B13;Porta scopini
+B14;Porta biancheria - rifiuti
+B15;Angoliere termoplastiche
+B16;Angoliere in filo
+B18;Appendini per scaldasalviette
+B19;Sgabelli doccia durolite
+B20;Specchi in abs
+B21;Specchi a filo
+B22;Applique per specchi
+B23;Piantane
+B24;Asciugamani elettronici Ideal Star
+B25;Asciugamani elettronici Vama
+B26;Dosatori
+B27;Distributori carta
+B28;Armadietto con serratura
+B29;Mobili da bagno classici bianchi
+B30;Mobili da bagno classici colorati
+B31;Mobili da bagno Moderni
+B32;Complementi per mobili
+B33;Mobili da bagno Arte Povera
+B34;Applique per mobili bagno
+B35;Box doccia alluminio acrilico
+B36;Box doccia alluminio vetro
+B37;Box doccia in cristallo 5 mm
+B38;Box doccia alluminio vetro MM6
+B39;Box doccia in cristallo 6MM
+B40;Box vasca
+B41;Box doccia Ideal Star 6 mm
+B42;Ricambi per box linea GIAVA
+B43;RICAMBI PER BOX IDEAL STAR
+B44;Box doccia pvc a soffietto
+B45;Tappeti doccia - vasca
+B46;Aste doccia
+B47;Tende doccia pvc
+B48;Tende doccia tessuto
+B49;Vasche in acciaio
+B50;Vasche acrilico Ideal Standard
+B51;Vasche acrilico Ideal Star
+B52;Vasche Treesse
+C;Rubinetteria
+C01;Rubinetteria monocomando Ideal Standard
+C02;Cartucce di ricambio Ideal Standard
+C03;Rubinetteria monocomando Paini
+C04;Rubinetteria tre fori Paini
+C05;Rubinetteria termostatica Paini
+C06;Cartucce di ricambio Paini
+C07;Rubinetteria monocomando Grohe
+C08;Rubinetteria di filtraggio Grohe
+C09;Cartucce di ricambio Grohe
+C10;Rubinetteria monocomando Frattini
+C11;Cartucce di ricambio Frattini
+C12;Rubinetteria monocomando Eurorama
+C13;Cartucce di ricambio Eurorama
+C14;Rubinetteria Teorema
+C15;Miscelatori Lavello Teorema
+C16;Cartucce di ricambio Teorema
+C18;Rubinetteria monocomando Mamoli
+C19;Rubinetteria monocomando Ponsi
+C20;Rubinetteria monocomando Ideal Star
+C21;Rubinetteria monocomando per cucina
+C22;Rubinetteria monocomando speciale
+C23;Ricambi per rubinetteria cucina
+C24;Rubinetteria monocomando leva clinica
+C25;Cartucce di ricambio per rubinetteria
+C26;Miscelatori termostatici
+C27;Rubinetteria monocomando Porta & Bini
+C28;Rubinetteria tradizionale 3 fori
+C29;Bocche di ricambio
+C30;Vitoni di ricambio
+C31;Rubinetteria leva sanitaria
+C32;Rubinetteria a pedale
+C33;Rubinetteria a pedale Idral
+C34;Bocche per rubinetteria a pedale
+C35;Bocche per rubinetteria a pedale
+C36;Rubinetteria temporizzata
+C37;Rubinetteria a pulsante
+C38;Ricambi per rubinetteria temporizzata
+C39;Passi rapidi
+C40;Leve per passi rapidi
+C41;Rubinetti per orinatoi
+C42;Accessori per orinatoi e vaso alla turca
+C43;Rubinetteria a fotocellula
+C44;Rubinetteria a fotocellula Grohe
+C45;Passi rapidi Mamoli
+C46;Rubinetti temporizzati e flussometri
+C53;RUBINETTETIA PILOT
+D;Accessori idraulici
+D01;Rubinetti sottolavabo
+D02;Rubinetti sottolavabo d'arredo
+D03;Rubinetti sottolavabo combinati
+D04;Rubinetti lavatrice
+D05;Distanziatori per rubinetteria
+D06;Rubinetti per scaldabagni elettrici
+D07;Curvette sottolavabo
+D08;Rubinetti per cassette
+D09;Tubetti rame cromati
+D10;Eccentrici e tiranti per rubinetteria
+D11;Scarico Norton e accessori
+D12;Raccordi cromati per tubetti rame
+D13;Lacci doccia
+D14;Curve doccia
+D15;Prese acqua
+D16;Set doccia
+D18;Shut-Off e idroscopini
+D19;Supporti doccia
+D20;Duplex doccia
+D21;Soffioni in ABS
+D22;Soffioni doccia in Abs Grohe
+D23;Soffioni in ottone - Inox
+D24;Bracci doccia ottone - Inox
+D25;Bracci doccia con soffione
+D26;Doccette Grohe
+D27;Doccette HansGrohe - Ideal Standard
+D28;Doccette in Abs
+D29;Saliscendi Ideal Standard - Grohe - Paini
+D30;Saliscendi HansGrohe
+D31;Saliscendi Gedy
+D32;Saliscendi Ideal Star
+D33;Set colonna Ideal Standard - Grohe
+D34;Set colonna termostatiche Ideal Star - Gedy
+D35;Set colonne Ideal Star - Gedy - Mamoli
+D36;Pannelli doccia in Abs Ideal Star
+D37;Pannelli doccia Inox Ideal Star
+D38;Pannelli doccia Inox
+D39;Ricambi per saliscendi
+D40;Deviatori
+D41;Ricambi per pannelli doccia
+D42;Sifoni in abs
+D43;Sifoni in ottone
+D44;Canotti cromati e accessori
+D45;Valvole immissione aria
+D46;Areatori universali
+D47;Areatori Neoperl
+D48;Riduzioni per aeratori e limitatori
+D49;Areatori Abs
+D50;Rosette e rosoni
+D51;Rosette per radiatori e termoarredi
+D52;Tappi espansione
+D53;Pilette in ottone
+D54;Griglie per pilette
+D55;Codoli
+D56;Sifoni doccia ribassati
+D57;Pilette pvc per doccia
+D58;Raccolta e canalizzazione
+D59;Colonne vasca ottone
+D60;Jolly flex e raccordi
+D61;Congiunzioni in pvc
+D62;Curve e tubi per vaso
+D63;Manicotti gomma per vaso
+D64;Sifoni e accessori per lavatrice
+D65;Sifoni in pvc Lira
+D66;Sifoni in pvc per lavello
+D67;Pilette per sifone in pvc
+D68;Griglie per pilette in pvc
+D69;Accessori per sifone in pvc
+D70;Raccordi piombo - plastica
+D71;Molle e stura lavandino
+D72;Canapa e teflon
+D73;Tappi per lavello e coprifori
+D74;Guarnizioni e morsetti
+D75;Flessibili inox giganti
+D76;Flessibili acciaio inox
+D77;Flessibili antivibranti
+D78;Flessibili Parigi
+D79;Flessibili antivibranti Parigi
+D80;Tubi e raccordi lavatrice
+D81;Ricambi per scaldabagni elettrici
+D82;Valvole di sicurezza per scaldabagni
+D83;Galleggianti in ottone
+D84;Sfere per galleggianti
+D85;Contatori acqua
+D86;Valvole contatori acqua
+D87;Riduttori di pressione acqua
+D88;Accessori per riduttori di pressione
+D89;Riduttori di pressione acqua Honeywell
+D90;Accessori bronzati
+D91;Accessori Nero matt
+D93;PRODOTTI IDRAULICI EX BONOMINI
+E;Valvole a sfera
+E01;Valvole a sfera passaggio totale Tiemme
+E02;Valvole a sfera passaggio totale Tiemme
+E03;Valvole a sfera passaggio standard Tiemme
+E04;Valvole a sfera con bocchettone
+E05;Valvole a sfera per solare
+E06;Valvole a sfera ICMA
+E07;Valvole a sfera con bocchettone
+E08;Valvole a sfera con regolazione flusso
+E09;Mini rubinetti con bocchettone
+E10;Valvole incasso Fiv
+E11;Valvole incasso Teco
+E12;Elettrovalvola per acqua
+E13;Rubinetti portagomma a sfera
+E14;Rubinetti ornamentali
+E15;Minivalvole
+E16;Valvola motorizzata Icma
+E18;Valvola motorizzata Mut
+E19;Valvola motorizzata Honeywell
+E20;Valvole a sfera gas certificate EN331
+E21;Valvole a sfera gas con presa pressione
+E23;Valvole a sfera gas post contatore Fiv
+E24;Rubinetti gas
+E25;Valvole ad incasso gas
+E26;Valvole ad incasso gas Fiv
+E27;Valvole ad incasso gas Teco
+E28;Giunti dielettrici
+F;Raccorderia
+F01;Valvole di ritegno
+F02;Valvole di fondo e filtri
+F03;Raccordi per pompe
+F04;Raccordi per serbatoi e cassoni
+F05;Raccordi per serbatoi in PP
+F06;Raccordi portagomma in PA
+F07;Raccordi di congiunzione
+F08;Raccordi in congiunzione Astori
+F09;Raccordi ottone filettato giallo
+F10;Raccordi ottone filettato cromato
+F11;Raccordi per tubo polietilene anello O-RING
+F12;Raccordi per tubo polietilene COBRARING anello O-RING
+F13;Raccordi per tubo polietilene anello resina
+F14;Raccordi per tubo polietilene TIPO TOF anello resina
+F15;Raccordi compressione per tubo polietilene
+F16;Prese a staffa
+F18;Giunti di transizione
+F19;Elettrosaldabili
+F20;Raccordi polipropilene WAVIN lisci
+F21;Raccordi polipropilene Wavin inserto ottone
+F23;Tappi prova impianti
+F24;Raccordi in acciaio zincato vite di prolungamento
+F25;Raccordi in acciaio zincato
+F26;Raccordi in ghisa zincati Eo Atusa
+F27;Raccordi a compressione in ghisa
+F28;Valvole e raccordi in acciaio inox
+F29;Flange e valvole a saldare
+G;Scarici in pvc
+G01;Tubi e raccordi in PP grigio
+G02;Tubi e raccordi in PP GEBERIT
+G03;Tubi e raccordi in ppc fonoisolanti Sitech
+G04;Tubi e raccordi in PE per scarico
+G05;Raccordi in pvc testa di moro
+G06;Raccordi in pvc arancio
+G07;Tubi e raccordi Phono Black
+G08;Tubi e raccordi in pvc ME Nicoll
+G09;Sigillanti per raccordi
+G10;Sigillanti Henkel
+H;Articoli FAR
+H01;Collettori e accessori Far
+H02;Valvole e detentori Far
+H03;Valvole di zona motorizzate Far
+H04;Gruppi riempimento Far
+H05;Defangatori Far
+H06;Riduttori Far
+H07;Raccordi per gas Far
+H08;Raccordi per tubo rame - multistrato - plastica Far
+H09;Raccordi con kit di tenuta per tubo multistrato Far
+H10;Accessori per pannelli solari Far
+I;Collettori e raccordi
+I01;Raccordi a compressione per tubo rame ogiva P.T.E.F.
+I02;Raccordi a compressione per tubo rame O-RING Ape
+I03;Raccordi a compressione per tubo rame O-RING Tiemme
+I04;RACCORDI A COMPRESSIONE CON OGIVA OTTONE
+I05;Raccordi a compressione con tenuta O-RING giallo serie 1350
+I06;Raccordi rame a saldare
+I07;Raccordi rame a saldare per tubo Gelo
+I08;Raccordi a bronzo a saldare
+I09;Raccordi in rame a pressare per acqua e gas
+I10;Raccordi in bronzo a pressare per acqua e gas
+I11;Tubo multistrato Unidelta
+I12;Tubo multistrato Ape
+I13;Tubo multistrato Cardinale
+I14;Raccordi a compressione per tubo multistrato Tdm
+I15;Raccordi a compressione per tubo multistrato Tiemme
+I16;Raccordi a compressione per tubo multistrato Ape
+I18;Raccordi universale per tubi rame-pex-multistrato
+I19;Adattatore per rame multistrato
+I20;Adattatori per tubo rame-pex-multistrato Tiemme
+I21;Raccordi a pressare per tubi multistrato Unidelta
+I22;Raccordi a pressare per tubi multistrato APE
+I23;Raccordi a pressare per tubi multistrato Icma
+I24;Raccordi a pressare per tubi multistrato Tiemme
+I25;Valvole incasso per multistrato
+I26;Tubo multistrato per gas
+I27;Raccordi multistrato per gas
+I28;Sbavatori-Calibratori
+I29;Tubo e raccordi Cobra Pex
+I30;Collettori complanari Icma
+I31;Collettori complanari Tiemme
+I32;Collettori lineari senza rubinetto
+I33;Collettori lineari con rubinetti Icma
+I34;Collettori lineari con rubinetti Tiemme
+I35;Accessori per collettori
+I36;Cassette e sportelli per collettori
+I37;Cassette alloggio collettori Tiemme
+J;Valvole e detentori
+J01;Valvole e detentori Icma
+J02;Valvole e detentori Poletti
+L;Riscaldamento e termoregolazione
+L01;Valvole di sicurezza
+L02;Valvole anticondensa
+L03;Valvole termostatiche
+L04;Kit solare sottocaldaia
+L05;Gruppi di rilancio
+L06;Moduli interfaccia caldaia-termoprodotti
+L07;Scambiatori piastre
+L08;Gruppi di riempimento
+L09;Defangatore-disaeratore
+L10;Kit radiatori
+L11;Tappi e riduzione per radiatori
+L12;Valvole di sfogo per radiatori
+L13;Valvole sfogo aria automatica
+L14;Radiatori in alluminio Fondital
+L15;Radiatori in alluminio Radiatori2000
+L16;Radiatori in alluminio Ferroli
+L17;Scaldasalviette elettrico
+L18;Radiatori scaldasalviette
+L19;Kit fissaggio scaldasalviette
+L20;Accessori per scaldasalviette e radiatori
+L21;Radiatori tubolari in acciaio
+L22;Accessori per radiatori tubolari
+L23;Ventilconvettore e accessori Ventilclima
+L24;Ventilconvettore Ideal Clima
+L25;Ventilconvettori Ferroli
+L26;Accessori per ventilconvettori Ferroli
+L27;Radiatori a gas Italkero
+L28;Radiatori a gas Fondital
+L29;Termocamini
+L30;Termocamini combinati
+L31;Caldaia Biomassa
+L32;Stufe a pellet Linea Vz
+L33;Stufe a legna
+L34;Caldaie a gas Ferroli
+L35;Accessori per caldaie Ferroli
+L36;Caldaie a gas Vaillant
+L37;Accessori per caldaie Vaillant
+L38;Accessori per caldaie BAXI
+L39;Scaldini a gas Ferroli
+L40;Scaldini a gas e accessori Ferroli
+L41;Scaldini a gas Hermann
+L42;Accessori per scaldini Hermann
+L43;Scaldini a gas Vaillant
+L44;Accessori per scaldini Vaillant
+L45;Scaldini a gas BAXI
+L46;Tubi rame per caldaie
+L47;Tubi e raccordi coassiali PP - Alluminio
+L48;Tubi e raccordi mono parete PPS
+L49;Tubi flessibili in PPS
+L50;Terminali
+L51;Tubi e raccordi mono parete Alluminio
+L52;Tubi e raccordi coassiali Alluminio
+L53;Tubi e raccordi in alluminio per stufe a pellet
+L54;Tubi e raccordi inox per stufe a pellet
+L55;Termostati ambiente
+L56;Cronotermostati
+L57;Termostati
+L58;Accessori per termoregolazione
+L59;Orologi Programmatori
+L60;CALDAIE A GAS BERETTA
+L61;ACCESSORI BERETTA
+L62;SCALDINI A GAS BERETTA
+L63;RADIATORI SCALDASALVIETTE CARDINALE
+M;Fumisteria
+M01;Copricaldaie ed esalatori
+M02;Griglie di aereazione
+M03;Griglie di aereazione con molla
+M04;Aspiratori elettrici
+M05;Unità di ventilazione
+M06;Accessori per cappe
+M07;Tubo flessibile alluminio
+M08;Cassetti e sportelli per acqua-gas
+M09;Cassetti e sportelli in plastica per contatori gas
+M10;Vasi d'espansione
+M11;Tubi e raccordi inox monoparete
+M12;Tubi e raccordi inox doppia parete
+N;Gas, sigillante e antincendio
+N01;Regolatori gas Novacomet
+N02;Regolatori gas Cavagna
+N03;Manichette gas
+N04;Raccordi gas
+N05;Filtri e manometri gas
+N06;Flessibili gas per cucine
+N07;Flessibili acqua-gas per caldaie
+N08;Contatore gas e accessori
+N09;Tubo cartellabile acqua e gas
+N10;Tubo per solare
+N11;Elettrovalvole gas
+N12;Cannelli per saldatura
+N13;Prodotti chimici Biffi
+N14;Prodotti chimici Faren
+N15;Neutralizzatori di condensa
+N16;Prodotti chimici lavaggio impianto
+N18;Prodotti chimici SOUDAL
+N19;Prodotti chimici Camon
+N20;Aquakit
+N21;Cemento
+N22;Lega stagno-piombo
+N23;Articoli antincendio
+O;Fissaggi
+O01;Fissaggi e mensole Fischer
+O02;Fissaggi e mensole
+O03;Staffe per condizionatori
+P;Tubi
+P01;Tubo polietilene
+P02;Tubo zincato
+P03;Tubo e nastri isolanti
+P04;Collari di riparazione
+P05;Tubo rame
+P06;Tubo gas gomma e guaina per gas
+P07;TUBO RAME CARDINALE
+P08;FAST PIPE
+P90;PRODOTTI IN PROMOZIONE
+Q;Elettropompe e filtri
+Q01;Elettropompe Grundfos
+Q02;Elettropompe Ebara
+Q03;Circolatori elettronici
+Q04;Circolatori di pressione
+Q05;Elettropompe Ideal Star
+Q06;Press control Water Tech
+Q07;Press control Italtecnica
+Q08;Press control Ideal Star
+Q09;Flussostati elettronici
+Q10;Vasi polifunzionanti Globalwater
+Q11;Idrosfere
+Q12;Vasi di espansione autoclavi
+Q13;Membrane
+Q14;Autoclavi zincati
+Q16;Alimentatori d'aria
+Q17;Accessori per alimentatori d'aria
+Q18;Indicatori di livello
+Q19;Pressostati
+Q20;Manometri
+Q21;Raccordi 5 vie
+Q22;Galleggianti elettrici e valvole
+Q23;Contenitori filtri e accessori
+Q24;Dosatori sotto caldaia
+Q25;Kit sottocaldaia
+Q26;Minipompa dosatrice
+Q27;Anticalcare magnetici
+Q28;Filtri autopulenti
+Q29;Addolcitori
+Q30;Sale per addolcitori
+R;Pozzetti e mobili
+R01;Pozzetti e chiusini
+R02;Canale con griglia
+R03;Vetro mattoni
+R04;Lavelli inox appoggio
+R05;Lavelli inox incasso
+R06;Lavelli sintetici
+R07;Mobili sottolavelli
+R08;Mobili lavatoi in resina
+R09;Mobili lavatoi in nobilitato
+R10;Mobili coprilavatrice
+S;Articoli per disabili
+S01;Sanitari terza età Sanitosco
+S02;Sanitari terza età Alice
+S03;Articoli per disabili
+T;Sanitari in ceramica
+T01;Sanitari in ceramica Ideal Standard
+T02;Sanitari in ceramica Geberit - Classic
+T03;Sanitari in ceramica Geberit - Collection
+T04;Lavabi appoggio Geberit
+T05;Sedili, cerniere e fissaggi Geberit
+T06;Sanitari in ceramica Azzurra
+T07;Accessori e ricambi Azzurra
+T08;Sanitari in ceramica Alice
+T09;Sanitari in ceramica Duravit
+T10;Sanitari in ceramica
+T11;Sanitari in ceramica Universale
+T12;Piatti doccia in mineral marmo H. 2
+T13;Pilette e accessori per mineral marmo
+T14;Piatti doccia in ceramica Geberit
+T15;Piatti doccia in ceramica H.2 AZZURRA
+T16;Piatti doccia ceramica H. 4,5
+T18;Piatti doccia ceramica H. 4,5
+T19;Piatti doccia ceramica H. 6 Ferdy
+T20;Piatti doccia ceramica H. 6 Ferdy
+T21;Piatti doccia in ceramica H. 10
+T22;Piatti doccia in resina speciale H.4
+T23;Piatti doccia in acrilico
+T24;Sistemi doccia Aqualife
+T25;Lavabi di complemento
+T26;Lavabo appoggio
+T27;Lavabi appoggio Azzurra
+T28;Lavabi di complemento
+T30;Complementi in ceramica
+T31;Complementi in ceramica
+T32;Pilozzi e lavatoi
+T33;Mobili per lavatoi
+T34;Lavatoi Galassia
+T35;Sani Split
+T36;Solo Lift
+T37;Sanitari in Ceramica Cardinale
+T38;PIATTI DOCCIA UNTRAFLAT PIEDRA
+T39;SANITARI IN CERAMICA KOALA
+U;Scaldabagni elettrici
+U01;Scaldabagni Elettrici
+U02;Scaldabagni elettrici 10-30 Dianboiler
+U03;Scaldabagni elettrici 50 - 200 Dianboiler
+U04;Scaldabagni elettrici 10-30 Termoboiler
+U05;Scaldabagni elettrici 50 - 100 Termoboiler
+U06;Scaldabagni a pompa di calore Ferroli
+U07;Bollitori Novasolar
+U08;Puffer Novasolar
+U09;Combinati Elby
+U10;Volano termico Elby
+U11;SCALDACQUA ELETTRICI FERROLI
+V;Pannelli solari & climatizzatori
+V01;Kit Solari Circolazione Naturale
+V02;Kit Solari Circolazione Naturale
+V03;Kit solari circolazione forzata
+V04;Kit solari Ferroli
+V05;Ricambi per kit circolazione forzata
+V06;Antigelo
+V07;Pompe di calore Ferroli
+V08;Climatizzatori Ferroli
+V09;CLIMATIZZATORI TCL
+V10;Climatizzatore portatile Daitsu
+V11;Deumidificatore d'aria Daitsu
+V12;Climatizzatori senza unità esterna ARGO
+V13;Barriere d'aria
+V14;Raccordi per condizionamento in ottone
+V15;Gas per condizionatori
+V16;Rubinetti per Bombole Gas
+V18;Utensileria per climatizzazione
+V19;Canaline e accessori per climatizzatori
+V20;Cassette di predisposizione e sifoni per climatizzatori
+V21;Tubo spiralato e raccordi per impianti di climatizzazione
+V22;Accessori per climatizzatori
+V23;CLIMATIZZATORI IMMERGAS
+W;ARTICOLI FUORI CATALOGO
+W01;Articoli in esaurimento
+WFC;Fidelity Card
+X;Utensileria
+X01;Utensileria
+X02;Utensileria professionale
+X03;Utensileria Rems
+Y;Articoli ARTECLIMA
+Y01;Collettori e accessori Arteclima
+Y02;Valvole e detentori Arteclima
+Y03;Raccordi Arteclima
+Z;Fuori Catalogo
+Z98;ARTICOLI SERVIZIO
+Z99;FUORI CATALOGO
