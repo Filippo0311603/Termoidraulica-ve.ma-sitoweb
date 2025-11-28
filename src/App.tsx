@@ -621,12 +621,14 @@ const Catalog = ({
 
                     <div className="w-full lg:w-1/3 flex items-center gap-3">
                         <div className="relative w-full">
+                            <label htmlFor="category-select" className="sr-only">Seleziona categoria</label>
                             <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-900 pointer-events-none"><i className="fas fa-filter"></i></div>
                             <select
+                                id="category-select"
                                 value={activeCat}
                                 onChange={(e) => setActiveCat(e.target.value)}
                                 disabled={isLoading}
-                                aria-label="Filtra prodotti per categoria"
+                                //-label="Filtra prodotti per categoria"
                                 className={`w-full appearance-none bg-white border border-gray-300 text-gray-700 py-3 pl-12 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 cursor-pointer shadow-sm font-medium ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 {categories.map(cat => (<option key={cat} value={cat}>{cat === "Tutti" ? "Tutte le Categorie" : cat}</option>))}
@@ -952,13 +954,29 @@ const Footer = () => {
                             Il tuo negozio di termoidraulica a Ladispoli. Offriamo vendita e consulenza per riscaldamento, condizionamento e arredo bagno.
                         </p>
                         <div className="flex gap-4">
-                            <a href={"https://www.facebook.com/profile.php?id=100063694985327"} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all duration-300"><i className="fab fa-facebook-f"></i></a>
-                            <a href={"https://www.instagram.com/termoidraulica_vema/"} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-pink-600 hover:text-white flex items-center justify-center transition-all duration-300"><i className="fab fa-instagram"></i></a>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=100063694985327"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Seguici su Facebook" // <--- AGGIUNTO
+                                className="w-10 h-10 rounded-full bg-white/5 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all duration-300"
+                            >
+                                <i className="fab fa-facebook-f"></i>
+                            </a>
+                            <a
+                                href="https://www.instagram.com/termoidraulica_vema/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Seguici su Instagram" // <--- AGGIUNTO
+                                className="w-10 h-10 rounded-full bg-white/5 hover:bg-pink-600 hover:text-white flex items-center justify-center transition-all duration-300"
+                            >
+                                <i className="fab fa-instagram"></i>
+                            </a>
                         </div>
                     </div>
 
                     <div>
-                        <h4 className="text-white font-bold mb-6 text-lg">Menu Rapido</h4>
+                        <h3 className="text-white font-bold mb-6 text-lg">Menu Rapido</h3>
                         <ul className="space-y-3 text-sm">
                             <li><a href="#home" onClick={(e) => smoothScroll(e, 'home')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Home</a></li>
                             <li><a href="#chi-siamo" onClick={(e) => smoothScroll(e, 'chi-siamo')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Chi Siamo</a></li>
