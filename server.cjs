@@ -3,7 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+// Inizializza Stripe solo se la chiave è presente, altrimenti usa un oggetto vuoto per evitare crash
+const stripe = process.env.STRIPE_SECRET_KEY 
+    ? require('stripe')(process.env.STRIPE_SECRET_KEY) 
+    : null;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 // Importiamo i metodi dal nuovo modulo database
@@ -252,6 +255,11 @@ app.delete('/api/products/:id', authenticateToken, requireAdmin, async (req, res
 // STRIPE
 app.post('/create-payment-intent', async (req, res) => {
   const { amount, currency } = req.body;
+
+  if (!stripe) {
+      console.error("Stripe key missing");
+      return res.status(500).json({ error: { message: "Pagamenti non configurati (Manca API Key)" } });
+  }
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
