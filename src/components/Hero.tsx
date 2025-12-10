@@ -37,7 +37,7 @@ const Hero = () => {
                         </a>
                     </div>
                     <div className="mt-16 mb-16 flex items-center gap-10 text-white animate-slide-up delay-300 border-t border-white/10 pt-8">
-                        <div><h3 className="text-3xl font-bold text-white">25+</h3><p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Anni Esperienza</p></div>
+                        <div><h3 className="text-3xl font-bold text-white">40+</h3><p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Anni Esperienza</p></div>
                         <div className="w-px h-12 bg-white/20"></div>
                         <div><h3 className="text-3xl font-bold text-white">10k+</h3><p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Prodotti</p></div>
                         <div className="w-px h-12 bg-white/20"></div>

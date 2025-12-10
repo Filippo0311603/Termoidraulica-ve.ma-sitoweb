@@ -8,3 +8,8 @@ export type Product = {
     specs: string[];
     stock?: number;
 };
+
+export type CartItem = {
+    product: Product;
+    quantity: number;
+};

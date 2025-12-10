@@ -1,15 +1,15 @@
 import { Product } from '../types';
 import { COLORS } from '../utils/constants';
-import { smoothScroll } from '../utils';
 
 interface ProductModalProps {
     product: Product | null;
     onClose: () => void;
     isFavorite: boolean;
     onToggleFavorite: () => void;
+    onAddToCart: () => void;
 }
 
-const ProductModal = ({ product, onClose, isFavorite, onToggleFavorite }: ProductModalProps) => {
+const ProductModal = ({ product, onClose, isFavorite, onToggleFavorite, onAddToCart }: ProductModalProps) => {
     if (!product) return null;
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose}>
@@ -45,16 +45,15 @@ const ProductModal = ({ product, onClose, isFavorite, onToggleFavorite }: Produc
                     </div>
 
                     <div className="flex gap-4">
-                        <a
-                            href="#contatti"
-                            onClick={(e) => {
+                        <button
+                            onClick={() => {
+                                onAddToCart();
                                 onClose();
-                                smoothScroll(e, 'contatti');
                             }}
-                            className={`flex-1 ${COLORS.secondaryBg} text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition-all cursor-pointer`}
+                            className="flex-1 bg-orange-500 text-white text-center py-3 rounded-xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
                         >
-                            Richiedi Disponibilità
-                        </a>
+                            <i className="fas fa-cart-plus"></i> Aggiungi al Carrello
+                        </button>
                         <button
                             onClick={onToggleFavorite}
                             aria-label={isFavorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}

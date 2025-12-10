@@ -5,7 +5,6 @@ const FAQ = () => {
     const [openIndex, setOpenIndex] = useState(0);
     const FAQS = [
         { q: "Effettuate installazioni?", a: "No, siamo un negozio di vendita prodotti. Possiamo però consigliarti i materiali migliori per il tuo installatore di fiducia." },
-        { q: "Fate consegne a domicilio?", a: "No, non effettuiamo consegne di materiali." },
         { q: "Avete pezzi di ricambio?", a: "Assolutamente sì. Disponiamo di un magazzino ricambi molto fornito per le principali marche di caldaie e rubinetteria." },
         { q: "Quali sono gli orari del negozio?", a: "Siamo aperti dal Lunedì al Venerdì, 08:15 - 13:00 e 15 - 18:30. Chiusi il Sabato e la Domenica." },
     ];

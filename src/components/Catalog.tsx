@@ -9,12 +9,14 @@ const Catalog = ({
     products,
     favorites,
     toggleFavorite,
+    addToCart,
     isLoading,
     errorMsg
 }: {
     products: Product[],
     favorites: (string | number)[],
     toggleFavorite: (id: string | number) => void,
+    addToCart: (product: Product) => void,
     isLoading: boolean,
     errorMsg: string
 }) => {
@@ -177,8 +179,20 @@ const Catalog = ({
                                                 </div>
                                                 <p className="text-xs text-gray-400 mb-2 font-mono">Cod: {product.id}</p>
                                                 <p className="text-gray-500 text-sm mb-6 line-clamp-2">{product.desc}</p>
-                                                <div className="flex items-center text-sm font-semibold text-blue-900 group-hover:translate-x-2 transition-transform">
-                                                    Dettagli <i className="fas fa-arrow-right ml-2"></i>
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center text-sm font-semibold text-blue-900 group-hover:translate-x-2 transition-transform">
+                                                        Dettagli <i className="fas fa-arrow-right ml-2"></i>
+                                                    </div>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            addToCart(product);
+                                                        }}
+                                                        className="bg-orange-500 hover:bg-orange-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/30 transition-all hover:scale-110 z-20"
+                                                        title="Aggiungi al carrello"
+                                                    >
+                                                        <i className="fas fa-cart-plus"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -216,6 +230,7 @@ const Catalog = ({
                 onClose={() => setSelectedProduct(null)}
                 isFavorite={selectedProduct ? favorites.includes(selectedProduct.id) : false}
                 onToggleFavorite={() => selectedProduct && toggleFavorite(selectedProduct.id)}
+                onAddToCart={() => selectedProduct && addToCart(selectedProduct)}
             />
         </section>
     );

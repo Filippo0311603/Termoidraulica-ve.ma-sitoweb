@@ -25,7 +25,7 @@ const About = () => {
                         </div>
                         <div className="border-t pt-8 border-gray-100 flex gap-12">
                             <div><span className="block text-3xl font-bold text-blue-900">100%</span><span className="text-sm text-gray-500">Soddisfazione</span></div>
-                            <div><span className="block text-3xl font-bold text-blue-900">25+</span><span className="text-sm text-gray-500">Anni di Esperienza</span></div>
+                            <div><span className="block text-3xl font-bold text-blue-900">40+</span><span className="text-sm text-gray-500">Anni di Esperienza</span></div>
                         </div>
                     </div>
                 </div>

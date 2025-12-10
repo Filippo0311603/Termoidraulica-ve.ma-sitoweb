@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { COLORS } from '../utils/constants';
 import { smoothScroll } from '../utils';
+import { useAuth } from '../context/AuthContext';
 
-const LOGO_URL = "/logoo.png";
+const LOGO_URL = "/logoo.webp";
 
-const Navbar = ({ favoritesCount, onOpenFavorites }: { favoritesCount: number, onOpenFavorites: () => void }) => {
+const Navbar = ({ 
+    favoritesCount, 
+    onOpenFavorites, 
+    cartCount, 
+    onOpenCart,
+    onOpenAuth
+}: { 
+    favoritesCount: number, 
+    onOpenFavorites: () => void,
+    cartCount: number,
+    onOpenCart: () => void,
+    onOpenAuth: () => void
+}) => {
+    const { user, isAdmin } = useAuth();
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const navLinks = ['Chi Siamo', 'Servizi', 'Prodotti', 'Forniture', 'Contatti'];
@@ -18,6 +32,10 @@ const Navbar = ({ favoritesCount, onOpenFavorites }: { favoritesCount: number, o
     const handleNavClick = (e: React.MouseEvent, id: string) => {
         smoothScroll(e, id);
         setMobileMenuOpen(false);
+    };
+
+    const handleUserClick = () => {
+        onOpenAuth();
     };
 
     return (
@@ -58,6 +76,31 @@ const Navbar = ({ favoritesCount, onOpenFavorites }: { favoritesCount: number, o
                         )}
                     </button>
 
+                    {/* Tasto Carrello Desktop */}
+                    <button
+                        onClick={onOpenCart}
+                        aria-label="Vedi il carrello"
+                        className={`relative p-2 transition-colors ${scrolled ? 'text-gray-700 hover:text-orange-500' : 'text-white hover:text-orange-400'}`}
+                        title="Il tuo carrello"
+                    >
+                        <i className="fas fa-shopping-cart text-xl"></i>
+                        {cartCount > 0 && (
+                            <span className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                                {cartCount}
+                            </span>
+                        )}
+                    </button>
+
+                    {/* Tasto Login/Admin Desktop */}
+                    <button
+                        onClick={handleUserClick}
+                        aria-label={user ? "Profilo Utente" : "Accedi"}
+                        className={`relative p-2 transition-colors ${scrolled ? 'text-gray-700 hover:text-blue-500' : 'text-white hover:text-blue-400'}`}
+                        title={user ? (isAdmin ? "Dashboard Admin" : "Profilo") : "Accedi"}
+                    >
+                        <i className={`fas fa-user${user ? '-check' : ''} text-xl`}></i>
+                    </button>
+
                     <a href="#contatti" onClick={(e) => handleNavClick(e, 'contatti')} className={`${COLORS.secondaryBg} text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105 transition-all duration-300 transform cursor-pointer`}>Richiedi Info</a>
                 </div>
 
@@ -71,6 +114,19 @@ const Navbar = ({ favoritesCount, onOpenFavorites }: { favoritesCount: number, o
                         {favoritesCount > 0 && (
                             <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                                 {favoritesCount}
+                            </span>
+                        )}
+                    </button>
+
+                    <button
+                        onClick={onOpenCart}
+                        aria-label="Vedi il carrello"
+                        className={`relative p-2 ${scrolled ? 'text-gray-700' : 'text-white'}`}
+                    >
+                        <i className="fas fa-shopping-cart text-xl"></i>
+                        {cartCount > 0 && (
+                            <span className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                                {cartCount}
                             </span>
                         )}
                     </button>
@@ -91,6 +147,17 @@ const Navbar = ({ favoritesCount, onOpenFavorites }: { favoritesCount: number, o
                     {navLinks.map((item) => (
                         <a key={item} href={`#${item.toLowerCase().replace(' ', '-')}`} onClick={(e) => handleNavClick(e, item.toLowerCase().replace(' ', '-'))} className="hover:text-orange-500 text-lg">{item}</a>
                     ))}
+                    
+                    <button 
+                        onClick={() => {
+                            handleUserClick();
+                            setMobileMenuOpen(false);
+                        }}
+                        className="hover:text-blue-500 text-lg flex items-center gap-2"
+                    >
+                        <i className={`fas fa-user${user ? '-check' : ''}`}></i>
+                        {user ? (isAdmin ? "Dashboard Admin" : "Il mio Profilo") : "Accedi / Registrati"}
+                    </button>
                 </div>
             )}
         </nav>

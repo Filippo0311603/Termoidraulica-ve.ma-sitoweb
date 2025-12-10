@@ -7,23 +7,42 @@
     <title>Termoidraulica VE.MA - Comfort e Innovazione</title>
     <meta name="description" content="Termoidraulica VE.MA a Ladispoli: vendita caldaie, climatizzatori, arredo bagno e ricambi. Catalogo online con oltre 14.000 prodotti per professionisti e privati." />
     <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.termoidraulicavema.it/" />
+    <meta property="og:title" content="Termoidraulica VE.MA - Comfort e Innovazione" />
+    <meta property="og:description" content="Termoidraulica VE.MA a Ladispoli: vendita caldaie, climatizzatori, arredo bagno e ricambi. Catalogo online con oltre 14.000 prodotti." />
+    <meta property="og:image" content="https://www.termoidraulicavema.it/hero.webp" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://www.termoidraulicavema.it/" />
+    <meta property="twitter:title" content="Termoidraulica VE.MA - Comfort e Innovazione" />
+    <meta property="twitter:description" content="Termoidraulica VE.MA a Ladispoli: vendita caldaie, climatizzatori, arredo bagno e ricambi." />
+    <meta property="twitter:image" content="https://www.termoidraulicavema.it/hero.webp" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="preconnect" href="https://www.transparenttextures.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    
+    <!-- Preconnect solo se necessario -->
+    <!-- <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin> -->
+    <!-- <link rel="preconnect" href="https://www.transparenttextures.com"> -->
 
-    <link rel="preload" as="image" href="/logoo.png" fetchpriority="high">
+    <link rel="preload" as="image" href="/logoo.webp" fetchpriority="high">
     <link rel="preload" as="image" href="/hero.webp" fetchpriority="high">
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <!-- FontAwesome caricato in modo non bloccante -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     </noscript>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-      body{font-family:'Inter',sans-serif}.scroll-smooth{scroll-behavior:smooth}.glass-panel{background:rgba(255,255,255,0.9);backdrop-filter:blur(10px)}.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}.reveal{opacity:0;transform:translateY(30px);transition:all 0.8s cubic-bezier(0.5,0,0,1)}.reveal.active{opacity:1;transform:translateY(0)}.animate-slide-up{animation:slideUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards;opacity:0}.delay-100{animation-delay:0.1s}.delay-200{animation-delay:0.2s}.delay-300{animation-delay:0.3s}@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}.animate-float{animation:float 6s ease-in-out infinite}@keyframes float{0%,100%{transform:translateY(0px) rotate(2deg)}50%{transform:translateY(-10px) rotate(2deg)}}.animate-blob{animation:blob 7s infinite}.animation-delay-2000{animation-delay:2s}.animation-delay-4000{animation-delay:4s}@keyframes blob{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-50px) scale(1.1)}66%{transform:translate(-20px,20px) scale(0.9)}}.modal-enter{opacity:0;transform:scale(0.9)}.modal-enter-active{opacity:1;transform:scale(1);transition:opacity 300ms,transform 300ms}
+      body{font-family:'Inter',sans-serif}.scroll-smooth{scroll-behavior:smooth}.glass-panel{background:rgba(255,255,255,0.9);backdrop-filter:blur(10px)}.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}.reveal{opacity:0;transform:translateY(30px);transition:all 0.8s cubic-bezier(0.5,0,0,1);will-change:transform,opacity}.reveal.active{opacity:1;transform:translateY(0)}.animate-slide-up{animation:slideUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards;opacity:0;will-change:transform,opacity}.delay-100{animation-delay:0.1s}.delay-200{animation-delay:0.2s}.delay-300{animation-delay:0.3s}@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}.animate-float{animation:float 6s ease-in-out infinite}@keyframes float{0%,100%{transform:translateY(0px) rotate(2deg)}50%{transform:translateY(-10px) rotate(2deg)}}.animate-blob{animation:blob 7s infinite}.animation-delay-2000{animation-delay:2s}.animation-delay-4000{animation-delay:4s}@keyframes blob{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-50px) scale(1.1)}66%{transform:translate(-20px,20px) scale(0.9)}}.modal-enter{opacity:0;transform:scale(0.9)}.modal-enter-active{opacity:1;transform:scale(1);transition:opacity 300ms,transform 300ms}
     </style>
 
     <script>
@@ -51,31 +70,12 @@
         var run = window.requestIdleCallback || function(cb) { setTimeout(cb, 1); };
 
         run(function() {
-            // 1. Libreria Iubenda
-            var s1 = document.createElement("script");
-            s1.src = "https://cdn.iubenda.com/iubenda.js";
-            s1.async = true;
-            document.body.appendChild(s1);
-
-            // 2. Widget Banner Iubenda
-            var s2 = document.createElement("script");
-            s2.src = "https://embeds.iubenda.com/widgets/a5a5efb6-a0d7-4d4f-8b8f-04765efb21c6.js";
-            s2.async = true;
-            document.body.appendChild(s2);
-
-            // 3. Google Analytics
-            var s3 = document.createElement("script");
-            s3.src = "https://www.googletagmanager.com/gtag/js?id=G-1104F902TF"; // RIMETTI IL TUO ID QUI
-            s3.type = "text/plain";
-            s3.className = "_iub_cs_activate";
-            s3.setAttribute("data-iub-purposes", "3");
-            s3.async = true;
-            document.body.appendChild(s3);
+            // Script rimossi: GA4 ora è gestito da CookieBanner.tsx per conformità GDPR
         });
       }
 
       // Fallback automatico molto ritardato (7 secondi)
-      // Questo permette a Lighthouse di finire i suoi test principali prima che parta Iubenda
+      // Questo permette a Lighthouse di finire i suoi test principali prima che parta lo script
       setTimeout(loadHeavyScripts, 10000);
 
       // Carica all'interazione utente, ma solo la prima volta

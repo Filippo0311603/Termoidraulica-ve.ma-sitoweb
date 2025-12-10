@@ -3,9 +3,6 @@ import { smoothScroll } from '../utils';
 const LOGO_URL = "/logoo.png";
 
 const Footer = () => {
-    const PRIVACY_URL = "https://www.iubenda.com/privacy-policy/56603988";
-    const COOKIE_URL = "https://www.iubenda.com/privacy-policy/56603988/cookie-policy";
-
     return (
         <footer className="bg-slate-950 text-slate-400 py-16 border-t border-white/5">
             <div className="container mx-auto px-6">
@@ -44,11 +41,11 @@ const Footer = () => {
                     <div>
                         <h3 className="text-white font-bold mb-6 text-lg">Menu Rapido</h3>
                         <ul className="space-y-3 text-sm">
-                            <li><a href="#home" onClick={(e) => smoothScroll(e, 'home')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Home</a></li>
-                            <li><a href="#chi-siamo" onClick={(e) => smoothScroll(e, 'chi-siamo')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Chi Siamo</a></li>
-                            <li><a href="#servizi" onClick={(e) => smoothScroll(e, 'servizi')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Cosa Offriamo</a></li>
-                            <li><a href="#prodotti" onClick={(e) => smoothScroll(e, 'prodotti')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Prodotti</a></li>
-                            <li><a href="#forniture" onClick={(e) => smoothScroll(e, 'forniture')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Forniture</a></li>
+                            <li><a href="/#home" onClick={(e) => smoothScroll(e, 'home')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Home</a></li>
+                            <li><a href="/#chi-siamo" onClick={(e) => smoothScroll(e, 'chi-siamo')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Chi Siamo</a></li>
+                            <li><a href="/#servizi" onClick={(e) => smoothScroll(e, 'servizi')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Cosa Offriamo</a></li>
+                            <li><a href="/#prodotti" onClick={(e) => smoothScroll(e, 'prodotti')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Prodotti</a></li>
+                            <li><a href="/#forniture" onClick={(e) => smoothScroll(e, 'forniture')} className="hover:text-orange-500 transition-colors flex items-center gap-2"><i className="fas fa-chevron-right text-xs"></i> Forniture</a></li>
                         </ul>
                     </div>
 
@@ -57,21 +54,22 @@ const Footer = () => {
                         <ul className="space-y-3 text-sm">
                             <li>
                                 <a
-                                    href={PRIVACY_URL}
-                                    className="iubenda-nostyle iubenda-noiframe iubenda-embed hover:text-orange-500 transition-colors text-left flex items-center gap-2"
-                                    title="Privacy Policy"
+                                    href="/privacy-policy"
+                                    className="hover:text-orange-500 transition-colors text-left flex items-center gap-2"
                                 >
-                                    <i className="fas fa-shield-alt"></i> Privacy Policy
+                                    <i className="fas fa-shield-alt"></i> Privacy & Cookie Policy
                                 </a>
                             </li>
                             <li>
-                                <a
-                                    href={COOKIE_URL}
-                                    className="iubenda-nostyle iubenda-noiframe iubenda-embed hover:text-orange-500 transition-colors text-left flex items-center gap-2"
-                                    title="Cookie Policy"
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        window.dispatchEvent(new Event('openCookieSettings'));
+                                    }}
+                                    className="hover:text-orange-500 transition-colors text-left flex items-center gap-2 w-full"
                                 >
-                                    <i className="fas fa-cookie-bite"></i> Cookie Policy
-                                </a>
+                                    <i className="fas fa-cookie-bite"></i> Modifica preferenze cookie
+                                </button>
                             </li>
                             <li className="pt-6 border-t border-white/10 mt-4">
                                 <span className="block text-xs text-gray-500 uppercase tracking-widest mb-1">Dati Societari</span>
