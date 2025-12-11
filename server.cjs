@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const nodemailer = require('nodemailer');
 // Inizializza Stripe solo se la chiave è presente, altrimenti usa un oggetto vuoto per evitare crash
 const stripe = process.env.STRIPE_SECRET_KEY 
     ? require('stripe')(process.env.STRIPE_SECRET_KEY) 
@@ -151,115 +152,9 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
-// SAVE ORDER
-app.post('/api/orders', async (req, res) => {
-    const { userId, items, total, status } = req.body;
-    try {
-        const id = Date.now().toString();
-        const createdAt = new Date().toISOString();
-        const itemsJson = JSON.stringify(items);
-
-        await dbRun(
-            "INSERT INTO orders (id, userId, items, total, status, createdAt) VALUES (?, ?, ?, ?, ?, ?)",
-            [id, userId, itemsJson, total, status || 'pending', createdAt]
-        );
-
-        res.json({ success: true, orderId: id });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Errore salvataggio ordine" });
-    }
-});
-
-// GET ORDERS (Admin only)
-app.get('/api/orders', authenticateToken, requireAdmin, async (req, res) => {
-    try {
-        const orders = await dbAll(`
-            SELECT orders.*, users.firstName, users.lastName, users.email 
-            FROM orders 
-            LEFT JOIN users ON orders.userId = users.id
-            ORDER BY createdAt DESC
-        `);
-        
-        // Parse items JSON
-        const parsedOrders = orders.map(o => ({
-            ...o,
-            items: JSON.parse(o.items)
-        }));
-
-        res.json(parsedOrders);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Errore recupero ordini" });
-    }
-});
-
-// --- PRODUCTS API ---
-
-// GET ALL PRODUCTS
-app.get('/api/products', async (req, res) => {
-    try {
-        const products = await dbAll("SELECT * FROM products");
-        const parsedProducts = products.map(p => ({
-            ...p,
-            desc: p.description,
-            specs: JSON.parse(p.specs || '[]')
-        }));
-        res.json(parsedProducts);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Errore recupero prodotti" });
-    }
-});
-
-// ADD PRODUCT
-app.post('/api/products', authenticateToken, requireAdmin, async (req, res) => {
-    const { id, name, category, price, image, desc, specs, stock } = req.body;
-    try {
-        const specsStr = JSON.stringify(specs || []);
-        await dbRun(
-            "INSERT INTO products (id, name, category, price, image, description, specs, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            [id, name, category, price, image, desc, specsStr, stock]
-        );
-        res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Errore aggiunta prodotto" });
-    }
-});
-
-// UPDATE PRODUCT
-app.put('/api/products/:id', authenticateToken, requireAdmin, async (req, res) => {
-    const { id } = req.params;
-    const { name, category, price, image, desc, specs, stock } = req.body;
-    try {
-        const specsStr = JSON.stringify(specs || []);
-        await dbRun(
-            "UPDATE products SET name=?, category=?, price=?, image=?, description=?, specs=?, stock=? WHERE id=?",
-            [name, category, price, image, desc, specsStr, stock, id]
-        );
-        res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Errore aggiornamento prodotto" });
-    }
-});
-
-// DELETE PRODUCT
-app.delete('/api/products/:id', authenticateToken, requireAdmin, async (req, res) => {
-    const { id } = req.params;
-    try {
-        await dbRun("DELETE FROM products WHERE id=?", [id]);
-        res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Errore eliminazione prodotto" });
-    }
-});
-
 // STRIPE
 app.post('/create-payment-intent', async (req, res) => {
-  const { amount, currency } = req.body;
+  const { amount, currency, receipt_email } = req.body;
 
   if (!stripe) {
       console.error("Stripe key missing");
@@ -270,6 +165,7 @@ app.post('/create-payment-intent', async (req, res) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency,
+      receipt_email, // Invia ricevuta Stripe
       automatic_payment_methods: {
         enabled: true,
       },
@@ -281,6 +177,146 @@ app.post('/create-payment-intent', async (req, res) => {
   } catch (e) {
     res.status(400).send({ error: { message: e.message } });
   }
+});
+
+// EMAIL SENDER
+const sendOrderEmail = async (orderData) => {
+    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+        console.log("SMTP non configurato. Email non inviata.");
+        return;
+    }
+
+    const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: 587,
+        secure: false, // true per 465, false per altre porte
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+        },
+    });
+
+    const itemsList = orderData.items.map(item => 
+        `<li>${item.quantity}x ${item.product.name} - €${item.product.price}</li>`
+    ).join('');
+
+    // --- 1. EMAIL CLIENTE ---
+    let shippingNote = "";
+    if (orderData.deliveryMethod === 'shipping') {
+        shippingNote = `
+            <div style="background-color: #f0f9ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <h3>🚚 Spedizione in corso</h3>
+                <p>Il tuo ordine verrà preparato e spedito a breve.</p>
+                <p><strong>Non appena il pacco sarà affidato al corriere, ti invieremo una email con il link per tracciare la spedizione.</strong></p>
+            </div>
+        `;
+    } else {
+        shippingNote = `
+            <div style="background-color: #f0fdf4; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <h3>🏪 Ritiro in Sede</h3>
+                <p>Il tuo ordine è pronto per essere ritirato presso il nostro punto vendita.</p>
+                <p><strong>Indirizzo:</strong> Via delle Magnolie 21, 00055 Ladispoli (RM)</p>
+                <p>Ti aspettiamo!</p>
+            </div>
+        `;
+    }
+
+    const customerMailOptions = {
+        from: `"Termoidraulica VE.MA" <${process.env.SMTP_USER}>`,
+        to: orderData.email,
+        subject: `Conferma Ordine #${orderData.id} - VE.MA`,
+        html: `
+            <h1>Grazie per il tuo ordine, ${orderData.firstName}!</h1>
+            <p>Abbiamo ricevuto il tuo ordine e lo stiamo elaborando.</p>
+            ${shippingNote}
+            <h3>Riepilogo Ordine #${orderData.id}</h3>
+            <ul>${itemsList}</ul>
+            <p><strong>Totale: € ${(orderData.total / 100).toFixed(2)}</strong></p>
+            <br>
+            <h3>Dati Fatturazione/Spedizione:</h3>
+            <p>${orderData.firstName} ${orderData.lastName}</p>
+            <p>${orderData.address}</p>
+            <p>${orderData.city}, ${orderData.zip}</p>
+            <p>Tel: ${orderData.phone || 'N/A'}</p>
+            <br>
+            <p>Se hai domande, rispondi a questa email.</p>
+            <p>Cordiali saluti,<br>Il team VE.MA</p>
+        `,
+    };
+
+    // --- 2. EMAIL AMMINISTRATORE (Tu) ---
+    const adminMailOptions = {
+        from: `"VE.MA Shop Bot" <${process.env.SMTP_USER}>`,
+        to: process.env.SMTP_USER, // Invia a te stesso (o un'altra email admin se preferisci)
+        subject: `🔔 NUOVO ORDINE #${orderData.id} (${orderData.deliveryMethod === 'shipping' ? 'SPEDIZIONE' : 'RITIRO'})`,
+        html: `
+            <h2>Nuovo Ordine Ricevuto!</h2>
+            <p><strong>ID Ordine:</strong> ${orderData.id}</p>
+            <p><strong>Cliente:</strong> ${orderData.firstName} ${orderData.lastName}</p>
+            <p><strong>Email:</strong> ${orderData.email}</p>
+            <p><strong>Telefono:</strong> ${orderData.phone || 'N/A'}</p>
+            <p><strong>Metodo Consegna:</strong> ${orderData.deliveryMethod === 'shipping' ? 'SPEDIZIONE 🚚' : 'RITIRO IN SEDE 🏪'}</p>
+            
+            <hr>
+            <h3>Indirizzo Cliente (per Packlink/Fattura):</h3>
+            <p><strong>Nome:</strong> ${orderData.firstName} ${orderData.lastName}</p>
+            <p><strong>Email:</strong> <a href="mailto:${orderData.email}">${orderData.email}</a></p>
+            <p><strong>Indirizzo:</strong> ${orderData.address}</p>
+            <p><strong>Città:</strong> ${orderData.city}</p>
+            <p><strong>CAP:</strong> ${orderData.zip}</p>
+            <p><strong>Provincia:</strong> ${orderData.province || ''}</p>
+            
+            <hr>
+            <h3>Prodotti:</h3>
+            <ul>${itemsList}</ul>
+            <p><strong>Totale Incassato: € ${(orderData.total / 100).toFixed(2)}</strong></p>
+        `,
+    };
+
+    try {
+        // Invia al cliente
+        await transporter.sendMail(customerMailOptions);
+        console.log("Email cliente inviata a " + orderData.email);
+
+        // Invia all'admin
+        await transporter.sendMail(adminMailOptions);
+        console.log("Email admin inviata a " + process.env.SMTP_USER);
+
+    } catch (error) {
+        console.error("Errore invio email:", error);
+    }
+};
+
+// SAVE ORDER & SEND EMAIL
+app.post('/api/orders', async (req, res) => {
+    const { userId, items, total, status, customerDetails, deliveryMethod } = req.body;
+    try {
+        const id = Date.now().toString();
+        const createdAt = new Date().toISOString();
+        const itemsJson = JSON.stringify(items);
+
+        // Salva nel DB (Nota: userId può essere null per guest)
+        await dbRun(
+            "INSERT INTO orders (id, userId, items, total, status, createdAt) VALUES (?, ?, ?, ?, ?, ?)",
+            [id, userId || 'guest', itemsJson, total, status || 'paid', createdAt]
+        );
+
+        // Invia Email
+        if (customerDetails && customerDetails.email) {
+            await sendOrderEmail({
+                id,
+                items,
+                total, // in cents
+                deliveryMethod, // Passiamo il metodo
+                ...customerDetails
+            });
+        }
+
+        res.json({ success: true, orderId: id });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Errore salvataggio ordine" });
+    }
 });
 
 // The "catchall" handler: for any request that doesn't

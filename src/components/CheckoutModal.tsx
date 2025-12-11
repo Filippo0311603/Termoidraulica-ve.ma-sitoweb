@@ -51,7 +51,8 @@ const CheckoutModal = ({ isOpen, onClose, cartItems, total: subtotal, onSuccess 
                 // Amount must be in cents
                 const response = await axios.post(getApiUrl('create-payment-intent'), {
                     amount: Math.round(finalTotal * 100),
-                    currency: 'eur'
+                    currency: 'eur',
+                    receipt_email: formData.email // Passiamo l'email a Stripe per la ricevuta base
                 });
                 
                 setClientSecret(response.data.clientSecret);
@@ -263,7 +264,21 @@ const CheckoutModal = ({ isOpen, onClose, cartItems, total: subtotal, onSuccess 
                         <Elements options={options} stripe={getStripe()}>
                             <StripePaymentForm 
                                 total={finalTotal} 
-                                onSuccess={() => {
+                                onSuccess={async () => {
+                                    // Pagamento riuscito. Salviamo l'ordine e inviamo l'email.
+                                    try {
+                                        await axios.post(getApiUrl('api/orders'), {
+                                            userId: null, // O l'ID utente se loggato
+                                            items: cartItems,
+                                            total: Math.round(finalTotal * 100),
+                                            status: 'paid',
+                                            customerDetails: formData,
+                                            deliveryMethod: deliveryMethod // <--- AGGIUNTO: Inviamo il metodo di consegna
+                                        });
+                                    } catch (err) {
+                                        console.error("Errore salvataggio ordine:", err);
+                                        // Non blocchiamo l'utente, il pagamento è andato
+                                    }
                                     setStep(3);
                                     onSuccess();
                                 }}
