@@ -1,6 +1,6 @@
 import { smoothScroll } from '../utils';
 
-const LOGO_URL = "/logoo.png";
+const LOGO_URL = "/logoo.webp";
 
 const Footer = () => {
     return (
@@ -10,7 +10,7 @@ const Footer = () => {
 
                     <div>
                         <div className="flex items-center gap-3 mb-6">
-                            <img src={LOGO_URL} alt="VE.MA Logo" className="h-16 w-auto object-contain" />
+                            <img src={LOGO_URL} alt="VE.MA Logo" className="h-16 w-auto object-contain" width="64" height="64" loading="lazy" />
                             <span className="text-2xl font-bold text-white">VE.MA<span className="text-orange-500">.</span></span>
                         </div>
                         <p className="text-sm leading-relaxed mb-6">
