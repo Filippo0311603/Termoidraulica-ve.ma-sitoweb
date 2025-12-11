@@ -7,6 +7,7 @@ const FAQ = () => {
         { q: "Effettuate installazioni?", a: "No, siamo un negozio di vendita prodotti. Possiamo però consigliarti i materiali migliori per il tuo installatore di fiducia." },
         { q: "Avete pezzi di ricambio?", a: "Assolutamente sì. Disponiamo di un magazzino ricambi molto fornito per le principali marche di caldaie e rubinetteria." },
         { q: "Quali sono gli orari del negozio?", a: "Siamo aperti dal Lunedì al Venerdì, 08:15 - 13:00 e 15 - 18:30. Chiusi il Sabato e la Domenica." },
+        { q: "Accettate resi?", a: "No, non effettuiamo e non sono ammessi resi degli articoli spediti. Ti invitiamo a verificare attentamente i prodotti prima dell'acquisto." },
     ];
     return (
         <section className="py-24 bg-white">

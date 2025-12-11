@@ -80,7 +80,23 @@ const PrivacyPolicy = () => {
                     </div>
                 </Section>
 
-                <Section title="2. Dati Raccolti" icon="fa-database">
+                <Section title="2. Politica di Reso e Rimborsi" icon="fa-undo-alt">
+                    <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                        <h3 className="font-bold text-red-800 mb-2 flex items-center gap-2">
+                            <i className="fas fa-exclamation-triangle"></i> Esclusione del Diritto di Recesso
+                        </h3>
+                        <p className="text-red-700 text-sm leading-relaxed">
+                            Si informa la gentile clientela che, per la natura dei prodotti trattati (materiale termoidraulico, caldaie, sanitari, ceramiche), 
+                            <strong>NON sono ammessi resi né rimborsi</strong> una volta che la merce è stata spedita o ritirata.
+                        </p>
+                        <p className="text-red-700 text-sm leading-relaxed mt-2">
+                            Si prega di verificare attentamente le specifiche tecniche, le misure e la compatibilità dei prodotti prima di concludere l'ordine. 
+                            Il nostro staff è a disposizione per consulenze tecniche preventive.
+                        </p>
+                    </div>
+                </Section>
+
+                <Section title="3. Dati Raccolti" icon="fa-database">
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
                             <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">

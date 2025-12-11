@@ -71,6 +71,12 @@ const Footer = () => {
                                     <i className="fas fa-cookie-bite"></i> Modifica preferenze cookie
                                 </button>
                             </li>
+                            <li>
+                                <span className="text-red-400 flex items-start gap-2 text-xs mt-2 leading-tight">
+                                    <i className="fas fa-exclamation-triangle mt-0.5"></i> 
+                                    <span>Politica Resi: Non si effettuano rimborsi o resi su merce spedita.</span>
+                                </span>
+                            </li>
                             <li className="pt-6 border-t border-white/10 mt-4">
                                 <span className="block text-xs text-gray-500 uppercase tracking-widest mb-1">Dati Societari</span>
                                 <span className="block text-xs text-gray-400">P.IVA: 15349091007</span>

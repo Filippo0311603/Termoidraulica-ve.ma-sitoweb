@@ -62,6 +62,11 @@ const ProductModal = ({ product, onClose, isFavorite, onToggleFavorite, onAddToC
                             <i className={`${isFavorite ? 'fas' : 'far'} fa-heart`}></i>
                         </button>
                     </div>
+                    <div className="mt-4 text-center">
+                        <p className="text-xs text-gray-500">
+                            <i className="fas fa-info-circle mr-1"></i> Non si effettuano resi su merce spedita.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

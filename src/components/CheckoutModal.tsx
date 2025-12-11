@@ -21,6 +21,7 @@ const CheckoutModal = ({ isOpen, onClose, cartItems, total: subtotal, onSuccess 
     const [isProcessing, setIsProcessing] = useState(false);
     const [clientSecret, setClientSecret] = useState('');
     const [deliveryMethod, setDeliveryMethod] = useState<'pickup' | 'shipping'>('pickup');
+    const [acceptsReturnsPolicy, setAcceptsReturnsPolicy] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -104,6 +105,14 @@ const CheckoutModal = ({ isOpen, onClose, cartItems, total: subtotal, onSuccess 
                     <div className={`flex-1 py-3 text-center text-sm font-bold border-b-2 ${step >= 3 ? 'border-orange-500 text-orange-500' : 'border-transparent text-gray-400'}`}>
                         3. Conferma
                     </div>
+                </div>
+
+                {/* Warning No Returns */}
+                <div className="bg-orange-50 px-6 py-3 border-b border-orange-100 flex items-start gap-3">
+                    <i className="fas fa-exclamation-circle text-orange-500 mt-0.5"></i>
+                    <p className="text-xs text-orange-800 leading-tight">
+                        <strong>Attenzione:</strong> Procedendo con l'ordine accetti che <u>non si effettuano resi o rimborsi</u> sulla merce spedita. Verifica bene i prodotti prima di pagare.
+                    </p>
                 </div>
 
                 {/* Content */}
@@ -215,6 +224,22 @@ const CheckoutModal = ({ isOpen, onClose, cartItems, total: subtotal, onSuccess 
                                     </div>
                                 </div>
                             )}
+
+                            {/* Returns Policy Checkbox */}
+                            <div className="bg-red-50 p-4 rounded-xl border border-red-100 mt-6">
+                                <label className="flex items-start gap-3 cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        required
+                                        checked={acceptsReturnsPolicy}
+                                        onChange={(e) => setAcceptsReturnsPolicy(e.target.checked)}
+                                        className="mt-1 w-5 h-5 text-orange-500 rounded border-gray-300 focus:ring-orange-500"
+                                    />
+                                    <span className="text-sm text-red-800">
+                                        <strong>Dichiaro di aver letto e accettato:</strong> Non si effettuano e non sono ammessi resi degli articoli spediti. Confermo di aver verificato la correttezza dell'ordine.
+                                    </span>
+                                </label>
+                            </div>
 
                             {/* Totals Summary in Step 1 */}
                             <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 mt-6">
