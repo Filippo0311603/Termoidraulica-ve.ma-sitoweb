@@ -30,11 +30,11 @@ const Hero = () => {
                     <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-lg leading-relaxed animate-slide-up delay-200 font-light">
                         Il tuo negozio di fiducia per forniture termoidrauliche. Caldaie, climatizzatori, arredo bagno e ricambi delle migliori marche.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 animate-slide-up delay-300">
-                        <a href="#prodotti" onClick={(e) => smoothScroll(e, 'prodotti')} className={`${COLORS.secondaryBg} hover:bg-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-all shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 flex items-center justify-center gap-3 transform hover:-translate-y-1 cursor-pointer`}>
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 animate-slide-up delay-300">
+                        <a href="#prodotti" onClick={(e) => smoothScroll(e, 'prodotti')} className={`${COLORS.secondaryBg} hover:bg-orange-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-base md:text-lg transition-all shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 flex items-center justify-center gap-2 md:gap-3 transform hover:-translate-y-1 cursor-pointer`}>
                             Guarda il Catalogo <i className="fas fa-arrow-right"></i>
                         </a>
-                        <a href="#contatti" onClick={(e) => smoothScroll(e, 'contatti')} className="bg-white/5 hover:bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-full font-bold text-lg transition-all flex items-center justify-center gap-2 hover:border-white/40 cursor-pointer">
+                        <a href="#contatti" onClick={(e) => smoothScroll(e, 'contatti')} className="bg-white/5 hover:bg-white/10 backdrop-blur-md text-white border border-white/20 px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-base md:text-lg transition-all flex items-center justify-center gap-2 hover:border-white/40 cursor-pointer">
                             <i className="fas fa-map-marker-alt"></i> Dove Siamo
                         </a>
                     </div>
