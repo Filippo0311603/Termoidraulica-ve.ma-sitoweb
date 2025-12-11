@@ -6,7 +6,7 @@ let stripePromise: Promise<Stripe | null>;
 
 export const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+    stripePromise = loadStripe('pk_test_51Sckb3CZRX2lKQ5RfE7BzJPlaCngG5azEcnrot2BZ4RK3vNihxhx0x2Q6qchAfdNZvExFjCtCeJH3wCM5Tc5NjCa00ySitcDoR');
   }
   return stripePromise;
 };
