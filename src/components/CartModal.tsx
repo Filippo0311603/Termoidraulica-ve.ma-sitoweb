@@ -80,42 +80,42 @@ const CartModal = ({ isOpen, onClose, cartItems, updateQuantity, removeFromCart,
                     ) : (
                         <div className="space-y-4">
                             {cartItems.map(item => (
-                                <div key={item.product.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex gap-4 relative">
-                                    <div className="w-32 h-32 bg-white rounded-lg flex-shrink-0 overflow-hidden border border-gray-200 p-2 flex items-center justify-center">
+                                <div key={item.product.id} className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 flex gap-3 sm:gap-4 relative">
+                                    <div className="w-20 h-20 sm:w-32 sm:h-32 bg-white rounded-lg flex-shrink-0 overflow-hidden border border-gray-200 p-2 flex items-center justify-center">
                                         <img src={item.product.image} alt={item.product.name} className="max-w-full max-h-full object-contain" />
                                     </div>
-                                    <div className="flex-1 flex flex-col justify-between py-1">
+                                    <div className="flex-1 flex flex-col justify-between py-1 min-w-0">
                                         <div>
-                                            <div className="flex justify-between items-start">
-                                                <h4 className="font-bold text-gray-900 text-base line-clamp-2 pr-6">{item.product.name}</h4>
+                                            <div className="flex justify-between items-start gap-2">
+                                                <h4 className="font-bold text-gray-900 text-sm sm:text-base line-clamp-2">{item.product.name}</h4>
                                                 <button 
                                                     onClick={() => removeFromCart(item.product.id)}
-                                                    className="text-gray-400 hover:text-red-500 p-1 transition-colors"
+                                                    className="text-gray-400 hover:text-red-500 p-1 transition-colors flex-shrink-0"
                                                     title="Rimuovi prodotto"
                                                 >
-                                                    <i className="fas fa-trash-alt text-lg"></i>
+                                                    <i className="fas fa-trash-alt text-base sm:text-lg"></i>
                                                 </button>
                                             </div>
-                                            <p className="text-sm text-gray-500 mt-1 font-mono">Cod: {item.product.id}</p>
+                                            <p className="text-xs sm:text-sm text-gray-500 mt-1 font-mono">Cod: {item.product.id}</p>
                                         </div>
-                                        <div className="flex justify-between items-end mt-2">
-                                            <p className="font-bold text-blue-900 text-xl">{item.product.price}</p>
+                                        <div className="flex flex-wrap justify-between items-end gap-2 mt-2">
+                                            <p className="font-bold text-blue-900 text-lg sm:text-xl">{item.product.price}</p>
                                             
                                             {/* Quantity Controls */}
-                                            <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
+                                            <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 rounded-lg p-1">
                                                 <button 
                                                     onClick={() => updateQuantity(item.product.id, -1)}
-                                                    className="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm text-gray-600 hover:text-red-500 disabled:opacity-50 transition-colors"
+                                                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-white rounded shadow-sm text-gray-600 hover:text-red-500 disabled:opacity-50 transition-colors"
                                                     disabled={item.quantity <= 1}
                                                 >
-                                                    <i className="fas fa-minus text-xs"></i>
+                                                    <i className="fas fa-minus text-[10px] sm:text-xs"></i>
                                                 </button>
-                                                <span className="text-base font-bold w-6 text-center">{item.quantity}</span>
+                                                <span className="text-sm sm:text-base font-bold w-5 sm:w-6 text-center">{item.quantity}</span>
                                                 <button 
                                                     onClick={() => updateQuantity(item.product.id, 1)}
-                                                    className="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm text-gray-600 hover:text-green-500 transition-colors"
+                                                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-white rounded shadow-sm text-gray-600 hover:text-green-500 transition-colors"
                                                 >
-                                                    <i className="fas fa-plus text-xs"></i>
+                                                    <i className="fas fa-plus text-[10px] sm:text-xs"></i>
                                                 </button>
                                             </div>
                                         </div>
