@@ -66,7 +66,7 @@ const importData = async () => {
         db.run("BEGIN TRANSACTION");
         db.run("DELETE FROM products"); // Clear existing data
 
-        const stmt = db.prepare("INSERT INTO products (id, name, category, price, image, desc, specs, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        const stmt = db.prepare("INSERT INTO products (id, name, category, price, image, description, specs, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
         rl.on('line', (line) => {
             if (!line.trim()) return;

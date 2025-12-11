@@ -198,6 +198,7 @@ app.get('/api/products', async (req, res) => {
         const products = await dbAll("SELECT * FROM products");
         const parsedProducts = products.map(p => ({
             ...p,
+            desc: p.description,
             specs: JSON.parse(p.specs || '[]')
         }));
         res.json(parsedProducts);
@@ -213,7 +214,7 @@ app.post('/api/products', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const specsStr = JSON.stringify(specs || []);
         await dbRun(
-            "INSERT INTO products (id, name, category, price, image, desc, specs, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO products (id, name, category, price, image, description, specs, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             [id, name, category, price, image, desc, specsStr, stock]
         );
         res.json({ success: true });
@@ -230,7 +231,7 @@ app.put('/api/products/:id', authenticateToken, requireAdmin, async (req, res) =
     try {
         const specsStr = JSON.stringify(specs || []);
         await dbRun(
-            "UPDATE products SET name=?, category=?, price=?, image=?, desc=?, specs=?, stock=? WHERE id=?",
+            "UPDATE products SET name=?, category=?, price=?, image=?, description=?, specs=?, stock=? WHERE id=?",
             [name, category, price, image, desc, specsStr, stock, id]
         );
         res.json({ success: true });

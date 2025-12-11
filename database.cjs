@@ -109,7 +109,7 @@ const initDb = async () => {
             category TEXT,
             price TEXT,
             image TEXT,
-            desc TEXT,
+            description TEXT,
             specs TEXT,
             stock INTEGER
         )`
@@ -162,7 +162,7 @@ const migrateProducts = async () => {
                 for (const p of products) {
                     const specsStr = JSON.stringify(p.specs || []);
                     await run(
-                        "INSERT INTO products (id, name, category, price, image, desc, specs, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        "INSERT INTO products (id, name, category, price, image, description, specs, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                         [p.id, p.name, p.category, p.price, p.image, p.desc || '', specsStr, p.stock || 0]
                     );
                 }
