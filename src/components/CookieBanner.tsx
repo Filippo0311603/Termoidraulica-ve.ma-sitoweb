@@ -9,8 +9,8 @@ const CookieBanner = () => {
         const consent = localStorage.getItem('vema_cookie_consent');
         
         if (!consent) {
-            // Se non c'è scelta, mostra il banner dopo 1.5 secondi
-            const timer = setTimeout(() => setIsVisible(true), 1500);
+            // Se non c'è scelta, mostra il banner dopo 1 secondo
+            const timer = setTimeout(() => setIsVisible(true), 1000);
             return () => clearTimeout(timer);
         } else if (consent === 'accepted') {
             // Se aveva già accettato, inizializza GA4
@@ -44,7 +44,7 @@ const CookieBanner = () => {
     if (!isVisible) return null;
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md text-white p-6 z-50 border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.3)] animate-fade-in-up">
+        <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md text-white p-6 z-[100] border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.3)] animate-fade-in-up">
             <div className="container mx-auto max-w-6xl flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="text-sm text-gray-300 flex-1 leading-relaxed">
                     <p className="mb-2 font-bold text-white text-base">🍪 Informativa sui Cookie</p>
