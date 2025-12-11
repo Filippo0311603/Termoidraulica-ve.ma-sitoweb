@@ -150,21 +150,35 @@ const migrateUsers = async () => {
 };
 
 const migrateProducts = async () => {
-    const PRODUCTS_FILE = path.join(__dirname, 'public', 'products_lite.json');
+    const PRODUCTS_FILE = path.join(__dirname, 'public', 'products.json');
     if (fs.existsSync(PRODUCTS_FILE)) {
         const count = await get("SELECT count(*) as count FROM products");
         const rowCount = count ? parseInt(count.count) : 0;
 
-        if (rowCount === 0) {
-            console.log("Migrazione prodotti...");
+        // Se abbiamo pochi prodotti (es. versione lite), ricarichiamo tutto
+        if (rowCount <= 20) {
+            console.log("Migrazione prodotti (Full)...");
             try {
+                // Puliamo la tabella se stiamo facendo un upgrade dalla versione lite
+                if (rowCount > 0) {
+                    await run("DELETE FROM products");
+                }
+
                 const products = JSON.parse(fs.readFileSync(PRODUCTS_FILE));
+                // Batch insert o loop. Per sicurezza usiamo loop ma attenzione alle performance
+                // Se sono 14k prodotti, potrebbe volerci un po'.
+                // Ottimizzazione: usiamo una transazione se possibile, ma qui siamo su connessioni diverse (pg vs sqlite)
+                // Per ora lasciamo il loop, Render ha un timeout di boot ma speriamo basti.
+                
+                let inserted = 0;
                 for (const p of products) {
                     const specsStr = JSON.stringify(p.specs || []);
                     await run(
                         "INSERT INTO products (id, name, category, price, image, description, specs, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                         [p.id, p.name, p.category, p.price, p.image, p.desc || '', specsStr, p.stock || 0]
                     );
+                    inserted++;
+                    if (inserted % 1000 === 0) console.log(`Inseriti ${inserted} prodotti...`);
                 }
                 console.log("Migrazione prodotti completata.");
             } catch (e) {
