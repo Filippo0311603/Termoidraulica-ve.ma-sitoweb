@@ -23,11 +23,11 @@ const Hero = () => {
                         <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                         <span className="text-white font-semibold text-xs tracking-wider uppercase">Il punto di riferimento a Ladispoli</span>
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight animate-slide-up delay-100 drop-shadow-lg">
+                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold text-white mb-6 leading-tight animate-slide-up delay-100 drop-shadow-lg">
                         Qualità e Scelta per la tua <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-orange-400">Casa Ideale.</span>
                     </h1>
-                    <p className="text-xl text-gray-300 mb-10 max-w-lg leading-relaxed animate-slide-up delay-200 font-light">
+                    <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-lg leading-relaxed animate-slide-up delay-200 font-light">
                         Il tuo negozio di fiducia per forniture termoidrauliche. Caldaie, climatizzatori, arredo bagno e ricambi delle migliori marche.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 animate-slide-up delay-300">
@@ -38,12 +38,12 @@ const Hero = () => {
                             <i className="fas fa-map-marker-alt"></i> Dove Siamo
                         </a>
                     </div>
-                    <div className="mt-16 mb-16 flex items-center gap-10 text-white animate-slide-up delay-300 border-t border-white/10 pt-8">
-                        <div><h3 className="text-3xl font-bold text-white">40+</h3><p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Anni Esperienza</p></div>
-                        <div className="w-px h-12 bg-white/20"></div>
-                        <div><h3 className="text-3xl font-bold text-white">10k+</h3><p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Prodotti</p></div>
-                        <div className="w-px h-12 bg-white/20"></div>
-                        <div><h3 className="text-3xl font-bold text-white">4.8</h3><div className="flex text-orange-400 text-xs mt-1"><i className="fas fa-star"></i><i className="fas fa-star"></i><i className="fas fa-star"></i><i className="fas fa-star"></i><i className="fas fa-star"></i></div></div>
+                    <div className="mt-12 mb-12 flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-start gap-6 sm:gap-10 text-white animate-slide-up delay-300 border-t border-white/10 pt-8">
+                        <div className="text-center sm:text-left"><h3 className="text-2xl sm:text-3xl font-bold text-white">40+</h3><p className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest mt-1">Anni Esperienza</p></div>
+                        <div className="hidden sm:block w-px h-12 bg-white/20"></div>
+                        <div className="text-center sm:text-left"><h3 className="text-2xl sm:text-3xl font-bold text-white">10k+</h3><p className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest mt-1">Prodotti</p></div>
+                        <div className="hidden sm:block w-px h-12 bg-white/20"></div>
+                        <div className="text-center sm:text-left"><h3 className="text-2xl sm:text-3xl font-bold text-white">4.8</h3><div className="flex justify-center sm:justify-start text-orange-400 text-xs mt-1"><i className="fas fa-star"></i><i className="fas fa-star"></i><i className="fas fa-star"></i><i className="fas fa-star"></i><i className="fas fa-star"></i></div></div>
                     </div>
                 </div>
                 <div className="hidden lg:block relative animate-slide-up delay-200">

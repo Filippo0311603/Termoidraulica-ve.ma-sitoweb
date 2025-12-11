@@ -45,12 +45,12 @@ const Navbar = ({
                     <img 
                         src={LOGO_URL} 
                         alt="VE.MA Logo" 
-                        className="h-16 w-auto object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-md" 
+                        className="h-12 md:h-16 w-auto object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-md" 
                         fetchPriority="high"
                         width="64"
                         height="64"
                     />
-                    <span className={`text-2xl font-extrabold tracking-tight ${scrolled ? COLORS.primary : 'text-white'}`}>
+                    <span className={`text-xl md:text-2xl font-extrabold tracking-tight ${scrolled ? COLORS.primary : 'text-white'}`}>
                         VE.MA<span className="text-orange-500">.</span>
                     </span>
                 </a>
