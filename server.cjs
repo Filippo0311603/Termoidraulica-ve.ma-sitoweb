@@ -14,6 +14,10 @@ const { get: dbGet, query: dbAll, run: dbRun } = require('./database.cjs');
 const path = require('path');
 
 const app = express();
+// Trust proxy is required when running behind a load balancer (like Render, Heroku, Nginx)
+// to correctly identify the client IP address for rate limiting.
+app.set('trust proxy', 1); 
+
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-change-this';
 
 // Security Middleware
