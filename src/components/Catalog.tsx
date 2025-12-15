@@ -227,10 +227,12 @@ const Catalog = ({
             </div>
             <ProductModal
                 product={selectedProduct}
+                allProducts={products}
                 onClose={() => setSelectedProduct(null)}
                 isFavorite={selectedProduct ? favorites.includes(selectedProduct.id) : false}
                 onToggleFavorite={() => selectedProduct && toggleFavorite(selectedProduct.id)}
                 onAddToCart={() => selectedProduct && addToCart(selectedProduct)}
+                onSelectProduct={(product) => setSelectedProduct(product)}
             />
         </section>
     );

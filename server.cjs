@@ -145,7 +145,8 @@ app.post('/auth/register', async (req, res) => {
                 address: newUser.address,
                 city: newUser.city,
                 zip: newUser.zip,
-                userType: newUser.userType
+                userType: newUser.userType,
+                createdAt: newUser.createdAt
             }
         });
     } catch (err) {
@@ -190,7 +191,8 @@ app.post('/auth/login', async (req, res) => {
                 address: user.address,
                 city: user.city,
                 zip: user.zip,
-                userType: user.userType
+                userType: user.userType,
+                createdAt: user.createdAt
             } 
         });
     } catch (err) {

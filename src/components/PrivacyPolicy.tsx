@@ -83,7 +83,7 @@ const PrivacyPolicy = () => {
                 <Section title="2. Politica di Reso e Rimborsi" icon="fa-undo-alt">
                     <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
                         <h3 className="font-bold text-red-800 mb-2 flex items-center gap-2">
-                            <i className="fas fa-exclamation-triangle"></i> Esclusione del Diritto di Recesso
+                            <i className="fas fa-exclamation-triangle"></i>Diritto di Recesso
                         </h3>
                         <p className="text-red-700 text-sm leading-relaxed">
                             Si informa la gentile clientela che, per la natura dei prodotti trattati (materiale termoidraulico, caldaie, sanitari, ceramiche), 

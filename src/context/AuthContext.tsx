@@ -14,6 +14,7 @@ interface User {
     address?: string;
     city?: string;
     zip?: string;
+    createdAt?: string;
 }
 
 interface AuthContextType {

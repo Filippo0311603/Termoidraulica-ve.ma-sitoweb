@@ -70,11 +70,17 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                         <div className="w-20 h-20 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
                             <i className="fas fa-user"></i>
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-1">Ciao, {user.firstName}!</h2>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-1">Ciao, {user.firstName} {user.lastName}!</h2>
                         <p className="text-gray-500 text-sm">{user.email}</p>
                     </div>
 
                     <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-2 text-sm">
+                        {user.createdAt && (
+                            <div className="flex justify-between border-b border-gray-200 pb-2">
+                                <span className="text-gray-500">Membro dal:</span>
+                                <span className="font-bold text-gray-800">{new Date(user.createdAt).toLocaleDateString('it-IT')}</span>
+                            </div>
+                        )}
                         <div className="flex justify-between border-b border-gray-200 pb-2">
                             <span className="text-gray-500">Tipo Account:</span>
                             <span className="font-bold text-gray-800 capitalize">{user.userType === 'company' ? 'Azienda' : 'Privato'}</span>
