@@ -6,6 +6,7 @@ import re
 # --- CONFIGURAZIONE ---
 CSV_FOLDER = 'dati_csv'
 IMAGES_FOLDER = 'public/images' 
+DATASHEETS_FOLDER = 'public/schede_tecniche'
 OUTPUT_DIR = 'public' # Cartella di destinazione
 FILE_LITE = os.path.join(OUTPUT_DIR, 'products_lite.json')
 FILE_FULL = os.path.join(OUTPUT_DIR, 'products.json')
@@ -43,6 +44,24 @@ def get_smart_image_path(codice_originale, file_list):
             if test_file in file_list: return test_file
     return None
 
+def get_datasheet_path(codice_originale, file_list):
+    if not codice_originale: return None
+    codice_pulito = str(codice_originale).strip()
+    
+    # Cerca file PDF esatto o con zeri
+    possibili_nomi = [codice_pulito]
+    for i in range(1, 4): possibili_nomi.append(f"{'0'*i}{codice_pulito}")
+    
+    for nome in possibili_nomi:
+        # Priorità: formato con _st (es. 12345_st.pdf)
+        test_file_st = f"{nome}_st.pdf"
+        if test_file_st in file_list: return test_file_st
+
+        # Fallback: formato standard (es. 12345.pdf)
+        test_file = f"{nome}.pdf"
+        if test_file in file_list: return test_file
+    return None
+
 def run_etl():
     print("🔄 Inizio elaborazione dati...")
 
@@ -53,6 +72,16 @@ def run_etl():
     except FileNotFoundError:
         print(f"❌ ERRORE: Cartella {IMAGES_FOLDER} non trovata.")
         return
+
+    # 1b. Indicizzazione PDF
+    try:
+        if not os.path.exists(DATASHEETS_FOLDER):
+            os.makedirs(DATASHEETS_FOLDER)
+        files_pdf = set(os.listdir(DATASHEETS_FOLDER))
+        print(f"📄 PDF trovati: {len(files_pdf)}")
+    except Exception as e:
+        print(f"⚠️ Errore lettura PDF: {e}")
+        files_pdf = set()
 
     # 2. Lettura CSV (Gestione Encoding)
     try:
@@ -103,6 +132,10 @@ def run_etl():
         nome_img = get_smart_image_path(codice, files_reali)
         img_path = f"/images/{nome_img}" if nome_img else "https://via.placeholder.com/600x400?text=No+Image"
 
+        # Gestione PDF Scheda Tecnica
+        nome_pdf = get_datasheet_path(codice, files_pdf)
+        pdf_path = f"/schede_tecniche/{nome_pdf}" if nome_pdf else None
+
         # Specs
         specs = []
         if pd.notna(row.get('Produttore')): specs.append(f"Marca: {row.get('Produttore')}")
@@ -118,6 +151,7 @@ def run_etl():
             "name": row.get('Descrizione', 'Articolo'),
             "price": prezzo_fmt,
             "image": img_path,
+            "datasheet": pdf_path,
             "desc": row.get('Note') if pd.notna(row.get('Note')) else row.get('Descrizione'),
             "specs": specs,
             "stock": stock

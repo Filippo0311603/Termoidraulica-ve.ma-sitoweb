@@ -3,7 +3,7 @@ import { COLORS } from '../utils/constants';
 
 const Services = () => {
     const SERVICES = [
-        { icon: "fa-store", title: "Ampio Showroom", desc: "Vieni a toccare con mano la qualità dei nostri prodotti nel nostro punto vendita di Ladispoli." },
+        { icon: "fa-store", title: "Qualità dei prodotti", desc: "Vieni a toccare con mano la qualità dei nostri prodotti nel nostro punto vendita di Ladispoli." },
         { icon: "fa-comments", title: "Consulenza Tecnica", desc: "I nostri esperti al banco ti guideranno nella scelta del prodotto migliore per le tue esigenze." },
         { icon: "fa-boxes-stacked", title: "Magazzino Ricambi", desc: "Vasto assortimento di ricambi originali per caldaie, rubinetteria e cassette di scarico." },
         { icon: "fa-truck-ramp-box", title: "Forniture Cantieri", desc: "Listini dedicati e gestione ordini per installatori, imprese edili e professionisti del settore." }

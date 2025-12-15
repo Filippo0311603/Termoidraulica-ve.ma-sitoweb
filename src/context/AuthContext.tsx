@@ -6,6 +6,14 @@ interface User {
     lastName: string;
     email: string;
     role: 'user' | 'admin';
+    userType?: 'private' | 'company';
+    vatNumber?: string;
+    sdiCode?: string;
+    pec?: string;
+    fiscalCode?: string;
+    address?: string;
+    city?: string;
+    zip?: string;
 }
 
 interface AuthContextType {

@@ -112,7 +112,7 @@ const CheckoutModal = ({ isOpen, onClose, cartItems, total: subtotal, onSuccess 
                 <div className="bg-orange-50 px-6 py-3 border-b border-orange-100 flex items-start gap-3">
                     <i className="fas fa-exclamation-circle text-orange-500 mt-0.5"></i>
                     <p className="text-xs text-orange-800 leading-tight">
-                        <strong>Attenzione:</strong> Procedendo con l'ordine accetti che <u>non si effettuano resi o rimborsi</u> sulla merce spedita. Verifica bene i prodotti prima di pagare.
+                        <strong>Attenzione:</strong> Procedendo con l'ordine accetti che, in caso di reso, <u>le spese di spedizione sono a tuo carico</u>. Verifica bene i prodotti prima di pagare.
                     </p>
                 </div>
 
@@ -237,7 +237,7 @@ const CheckoutModal = ({ isOpen, onClose, cartItems, total: subtotal, onSuccess 
                                         className="mt-1 w-5 h-5 text-orange-500 rounded border-gray-300 focus:ring-orange-500"
                                     />
                                     <span className="text-sm text-red-800">
-                                        <strong>Dichiaro di aver letto e accettato:</strong> Non si effettuano e non sono ammessi resi degli articoli spediti. Confermo di aver verificato la correttezza dell'ordine.
+                                        <strong>Dichiaro di aver letto e accettato:</strong> Le spese di spedizione per eventuali resi sono a mio carico. Confermo di aver verificato la correttezza dell'ordine.
                                     </span>
                                 </label>
                             </div>

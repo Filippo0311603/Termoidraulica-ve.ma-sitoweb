@@ -87,7 +87,7 @@ const PrivacyPolicy = () => {
                         </h3>
                         <p className="text-red-700 text-sm leading-relaxed">
                             Si informa la gentile clientela che, per la natura dei prodotti trattati (materiale termoidraulico, caldaie, sanitari, ceramiche), 
-                            <strong>NON sono ammessi resi né rimborsi</strong> una volta che la merce è stata spedita o ritirata.
+                            <strong>I resi sono ammessi</strong>, ma le spese di spedizione per la restituzione sono interamente a carico del cliente.
                         </p>
                         <p className="text-red-700 text-sm leading-relaxed mt-2">
                             Si prega di verificare attentamente le specifiche tecniche, le misure e la compatibilità dei prodotti prima di concludere l'ordine. 
@@ -103,8 +103,10 @@ const PrivacyPolicy = () => {
                                 <i className="fas fa-pen text-orange-500 text-sm"></i> Dati forniti volontariamente
                             </h3>
                             <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2"><i className="fas fa-check text-green-500 mt-1"></i> Nome e Cognome</li>
-                                <li className="flex items-start gap-2"><i className="fas fa-check text-green-500 mt-1"></i> Indirizzo di spedizione/fatturazione</li>
+                                <li className="flex items-start gap-2"><i className="fas fa-check text-green-500 mt-1"></i> Nome, Cognome o Ragione Sociale</li>
+                                <li className="flex items-start gap-2"><i className="fas fa-check text-green-500 mt-1"></i> Indirizzo completo (Via, Città, CAP)</li>
+                                <li className="flex items-start gap-2"><i className="fas fa-check text-green-500 mt-1"></i> Codice Fiscale e/o Partita IVA</li>
+                                <li className="flex items-start gap-2"><i className="fas fa-check text-green-500 mt-1"></i> Codice SDI e PEC (per fatturazione elettronica)</li>
                                 <li className="flex items-start gap-2"><i className="fas fa-check text-green-500 mt-1"></i> Email e Telefono</li>
                                 <li className="flex items-start gap-2"><i className="fas fa-check text-green-500 mt-1"></i> Messaggi del form contatti</li>
                             </ul>
@@ -228,6 +230,8 @@ const PrivacyPolicy = () => {
                     <ul className="list-disc pl-5 space-y-2 mt-2">
                         <li><strong>Corrieri:</strong> Per la consegna degli ordini.</li>
                         <li><strong>Stripe:</strong> Per la gestione sicura dei pagamenti.</li>
+                        <li><strong>Consulenti Fiscali / Commercialista:</strong> Per la gestione della contabilità e fatturazione.</li>
+                        <li><strong>Agenzia delle Entrate:</strong> Per adempimenti di legge.</li>
                         <li><strong>Google:</strong> Per analytics e mappe (con garanzie di trasferimento dati).</li>
                         <li><strong>Fornitori tecnici:</strong> Hosting e manutenzione sito.</li>
                     </ul>

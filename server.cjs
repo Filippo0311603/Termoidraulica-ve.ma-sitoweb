@@ -66,9 +66,30 @@ const requireAdmin = (req, res, next) => {
 
 // REGISTER
 app.post('/auth/register', async (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
-
     try {
+        const { firstName, lastName, email, password, vatNumber, sdiCode, pec, fiscalCode, address, city, zip, userType } = req.body;
+        console.log("Register Request:", { email, userType, vatNumber });
+
+        // Validazione Dati Fiscali
+        if (vatNumber) {
+            if (!/^\d{11}$/.test(vatNumber)) {
+                return res.status(400).json({ message: 'Partita IVA non valida (richieste 11 cifre)' });
+            }
+            if (!sdiCode || sdiCode.length !== 7) {
+                return res.status(400).json({ message: 'Codice SDI non valido (richiesti 7 caratteri)' });
+            }
+            if (!pec || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pec)) {
+                return res.status(400).json({ message: 'Indirizzo PEC non valido' });
+            }
+            if (!address || !city || !zip) {
+                return res.status(400).json({ message: 'Indirizzo completo obbligatorio per fatturazione' });
+            }
+        }
+
+        if (fiscalCode && fiscalCode.length !== 16) {
+            return res.status(400).json({ message: 'Codice Fiscale non valido (richiesti 16 caratteri)' });
+        }
+
         const existingUser = await dbGet("SELECT * FROM users WHERE email = ?", [email]);
         if (existingUser) {
             return res.status(400).json({ message: 'Email già registrata' });
@@ -76,7 +97,6 @@ app.post('/auth/register', async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        // Admin check
         const role = email === 'admin@vema.it' ? 'admin' : 'user';
         if (role === 'admin') {
             const existingAdmin = await dbGet("SELECT * FROM users WHERE role = 'admin'");
@@ -92,12 +112,20 @@ app.post('/auth/register', async (req, res) => {
             email,
             password: hashedPassword,
             role,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            vatNumber: vatNumber || '',
+            sdiCode: sdiCode || '',
+            pec: pec || '',
+            fiscalCode: fiscalCode || '',
+            address,
+            city,
+            zip,
+            userType: userType || (vatNumber ? 'company' : 'private')
         };
 
         await dbRun(
-            "INSERT INTO users (id, firstName, lastName, email, password, role, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            [newUser.id, newUser.firstName, newUser.lastName, newUser.email, newUser.password, newUser.role, newUser.createdAt]
+            "INSERT INTO users (id, firstName, lastName, email, password, role, createdAt, vatNumber, sdiCode, pec, fiscalCode, address, city, zip, userType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [newUser.id, newUser.firstName, newUser.lastName, newUser.email, newUser.password, newUser.role, newUser.createdAt, newUser.vatNumber, newUser.sdiCode, newUser.pec, newUser.fiscalCode, newUser.address, newUser.city, newUser.zip, newUser.userType]
         );
 
         const token = jwt.sign({ id: newUser.id, role: newUser.role }, JWT_SECRET, { expiresIn: '24h' });
@@ -109,28 +137,39 @@ app.post('/auth/register', async (req, res) => {
                 firstName: newUser.firstName, 
                 lastName: newUser.lastName, 
                 email: newUser.email, 
-                role: newUser.role 
-            } 
+                role: newUser.role,
+                vatNumber: newUser.vatNumber,
+                sdiCode: newUser.sdiCode,
+                pec: newUser.pec,
+                fiscalCode: newUser.fiscalCode,
+                address: newUser.address,
+                city: newUser.city,
+                zip: newUser.zip,
+                userType: newUser.userType
+            }
         });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Errore server" });
+        console.error("Register Error:", err);
+        res.status(500).json({ message: "Errore server: " + err.message });
     }
 });
 
 // LOGIN
 app.post('/auth/login', async (req, res) => {
     const { email, password } = req.body;
+    console.log(`Login attempt for: ${email}`);
 
     try {
         const user = await dbGet("SELECT * FROM users WHERE email = ?", [email]);
 
         if (!user) {
+            console.log("User not found");
             return res.status(400).json({ message: 'Credenziali non valide' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            console.log("Password mismatch");
             return res.status(400).json({ message: 'Credenziali non valide' });
         }
 
@@ -143,12 +182,79 @@ app.post('/auth/login', async (req, res) => {
                 firstName: user.firstName, 
                 lastName: user.lastName, 
                 email: user.email, 
-                role: user.role 
+                role: user.role,
+                vatNumber: user.vatNumber,
+                sdiCode: user.sdiCode,
+                pec: user.pec,
+                fiscalCode: user.fiscalCode,
+                address: user.address,
+                city: user.city,
+                zip: user.zip,
+                userType: user.userType
             } 
         });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Errore server" });
+    }
+});
+
+// UPDATE USER
+app.put('/auth/me', authenticateToken, async (req, res) => {
+    try {
+        const { firstName, lastName, vatNumber, sdiCode, pec, fiscalCode, address, city, zip, password } = req.body;
+        const userId = req.user.id;
+        console.log(`Updating user ${userId}. Password provided: ${!!password}`);
+
+        // Validazione base (simile a register)
+        if (vatNumber && !/^\d{11}$/.test(vatNumber)) {
+            return res.status(400).json({ message: 'Partita IVA non valida' });
+        }
+        
+        // Costruiamo la query dinamica
+        let sql = "UPDATE users SET firstName = ?, lastName = ?, address = ?, city = ?, zip = ?";
+        let params = [firstName, lastName, address, city, zip];
+
+        // Aggiungiamo campi opzionali se presenti o se l'utente è azienda
+        sql += ", vatNumber = ?, sdiCode = ?, pec = ?, fiscalCode = ?";
+        params.push(vatNumber || '', sdiCode || '', pec || '', fiscalCode || '');
+
+        // Gestione Password
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            sql += ", password = ?";
+            params.push(hashedPassword);
+            console.log("Password updated in DB");
+        }
+
+        sql += " WHERE id = ?";
+        params.push(userId);
+
+        await dbRun(sql, params);
+
+        // Recuperiamo l'utente aggiornato per restituirlo
+        const updatedUser = await dbGet("SELECT * FROM users WHERE id = ?", [userId]);
+        
+        // Rimuoviamo la password prima di inviare
+        delete updatedUser.password;
+
+        res.json({ user: updatedUser });
+
+    } catch (err) {
+        console.error("Update Error:", err);
+        res.status(500).json({ message: "Errore durante l'aggiornamento del profilo" });
+    }
+});
+
+// DELETE USER
+app.delete('/auth/me', authenticateToken, async (req, res) => {
+    try {
+        await dbRun("DELETE FROM users WHERE id = ?", [req.user.id]);
+        res.json({ message: "Utente eliminato con successo" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Errore durante l'eliminazione dell'account" });
     }
 });
 

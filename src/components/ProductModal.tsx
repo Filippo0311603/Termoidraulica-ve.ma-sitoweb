@@ -42,6 +42,22 @@ const ProductModal = ({ product, onClose, isFavorite, onToggleFavorite, onAddToC
                                 </li>
                             ))}
                         </ul>
+
+                        {product.datasheet && (
+                            <div className="mt-6">
+                                <a 
+                                    href={product.datasheet} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg text-gray-700 font-bold hover:bg-gray-200 transition-colors border border-gray-200"
+                                >
+                                    <i className="fas fa-file-pdf text-red-500 text-xl"></i> Scarica Scheda Tecnica
+                                </a>
+                                <p className="text-xs text-gray-500 mt-2">
+                                    <i className="fas fa-info-circle mr-1"></i> Tutte le misure e le specifiche tecniche sono consultabili nel PDF.
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex gap-4">
@@ -64,7 +80,7 @@ const ProductModal = ({ product, onClose, isFavorite, onToggleFavorite, onAddToC
                     </div>
                     <div className="mt-4 text-center">
                         <p className="text-xs text-gray-500">
-                            <i className="fas fa-info-circle mr-1"></i> Non si effettuano resi su merce spedita.
+                            <i className="fas fa-info-circle mr-1"></i> I resi sono accettati. Le spese di spedizione per il reso sono a carico del cliente.
                         </p>
                     </div>
                 </div>

@@ -93,7 +93,15 @@ const initDb = async () => {
             email TEXT UNIQUE,
             password TEXT,
             role TEXT,
-            createdAt TEXT
+            createdAt TEXT,
+            vatNumber TEXT,
+            sdiCode TEXT,
+            pec TEXT,
+            fiscalCode TEXT,
+            address TEXT,
+            city TEXT,
+            zip TEXT,
+            userType TEXT
         )`,
         `CREATE TABLE IF NOT EXISTS orders (
             id TEXT PRIMARY KEY,
@@ -119,6 +127,16 @@ const initDb = async () => {
         await run(sql);
     }
     
+    // Schema Migration (Add new columns to existing tables)
+    const newColumns = ['vatNumber', 'sdiCode', 'pec', 'fiscalCode', 'address', 'city', 'zip', 'userType'];
+    for (const col of newColumns) {
+        try {
+            await run(`ALTER TABLE users ADD COLUMN ${col} TEXT`);
+        } catch (e) {
+            // Column likely exists
+        }
+    }
+
     // Migrazioni
     await migrateUsers();
     await migrateProducts();
