@@ -46,7 +46,7 @@ const Navbar = ({
                         src={LOGO_URL} 
                         alt="VE.MA Logo" 
                         className="h-12 md:h-16 w-auto object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-md" 
-                        fetchpriority="high"
+                        fetchPriority="high"
                         width="64"
                         height="64"
                     />
