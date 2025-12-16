@@ -57,6 +57,58 @@ const Catalog = ({
         const matchesSearch = searchTerms.every(term => productDataString.includes(term));
 
         return matchesCategory && matchesSearch;
+    }).sort((a, b) => {
+        if (!searchQuery.trim()) return 0;
+        
+        const query = searchQuery.toLowerCase().trim();
+        
+        const getScore = (p: Product) => {
+            const name = p.name.toLowerCase();
+            let score = 0;
+            
+            // 1. Corrispondenza Esatta (Priorità Massima)
+            if (name === query) score = 100;
+            
+            // 2. Inizia con la query (Priorità Alta) - es. "Bidet ..." appare prima di "Sifone Bidet"
+            else if (name.startsWith(query)) score = 80;
+            
+            // 3. Contiene la query come parola intera (Priorità Media)
+            else if (` ${name} `.includes(` ${query} `)) score = 60;
+            
+            // 4. Contiene la query come sottostringa nel nome (Priorità Bassa)
+            else if (name.includes(query)) score = 40;
+            
+            // 5. Match nella categoria
+            else if (p.category.toLowerCase().includes(query)) score = 20;
+            
+            // --- LOGICA INTELLIGENTE ---
+            
+            // A. Penalità Accessori
+            // Se stiamo cercando un prodotto principale (es. "Bidet"), penalizziamo gli accessori che contengono quella parola
+            const accessoryWords = ["sifone", "rubinetto", "miscelatore", "kit", "fissaggio", "staffa", "curva", "manicotto", "sedile", "copriwater", "asse", "tavoletta", "placca", "cassetta", "canotto", "raccordo", "piletta", "accessorio", "ricambio", "flessibile", "gomito", "riduzione"];
+            
+            // Applichiamo la penalità solo se la query NON è essa stessa un accessorio
+            // (es. se cerco "sifone", non devo penalizzare i sifoni)
+            const isSearchingForAccessory = accessoryWords.some(w => query.includes(w));
+            
+            if (!isSearchingForAccessory) {
+                if (accessoryWords.some(word => name.includes(word))) {
+                    score -= 30; // Penalità significativa per spingerli in fondo
+                }
+            }
+
+            // B. Boost Sinonimi / Concetti
+            // Se cerco "sanitari", voglio vedere Vasi e Bidet, non solo cose che si chiamano "sanitari"
+            if (query.includes('sanitari')) {
+                if (name.includes('vaso') || name.includes('bidet') || name.includes('wc')) {
+                    score += 50; // Boost molto alto per farli superare i match parziali
+                }
+            }
+            
+            return score;
+        };
+
+        return getScore(b) - getScore(a);
     });
 
     const visibleProducts = filteredProducts.slice(0, visibleCount);
