@@ -106,11 +106,6 @@ const Catalog = ({
                                 <button onClick={() => setInputValue("")} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"><i className="fas fa-times"></i></button>
                             )}
                         </div>
-                        {/* Smart search hint */}
-                        <p className="mt-2 text-xs text-gray-400 flex items-center gap-1">
-                            <i className="fas fa-bolt text-blue-400"></i>
-                            <span>Ricerca intelligente: prova <em>"tazza"</em>, <em>"lavandino"</em>, <em>"caldaia ferroli"</em> o il codice articolo</span>
-                        </p>
                     </div>
 
                     <div className="w-full lg:w-1/3 flex items-center gap-3">

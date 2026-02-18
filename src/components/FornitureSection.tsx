@@ -1,6 +1,5 @@
 ﻿import { useEffect, useRef, useState } from 'react';
 import { SOCIAL_LINKS } from '../utils/constants';
-import { smoothScroll } from '../utils';
 
 // ── Foto reali del negozio / forniture ──────────────────────
 import fotoForniture1 from '../assets/images/foto-forniture.webp';
@@ -25,28 +24,12 @@ const GALLERY_PHOTOS = [
 ];
 
 // ── Brand ticker data ────────────────────────────────────────
-const BRANDS = [
-    { name: 'GEBERIT',        icon: 'fa-toilet' },
-    { name: 'GROHE',          icon: 'fa-faucet' },
-    { name: 'FERROLI',        icon: 'fa-fire' },
-    { name: 'VAILLANT',       icon: 'fa-temperature-high' },
-    { name: 'IDEAL STANDARD', icon: 'fa-bath' },
-    { name: 'BERETTA',        icon: 'fa-burn' },
-    { name: 'BAXI',           icon: 'fa-fire-burner' },
-    { name: 'FONDITAL',       icon: 'fa-radiation' },
-    { name: 'GRUNDFOS',       icon: 'fa-water' },
-    { name: 'HANSGROHE',      icon: 'fa-shower' },
-    { name: 'DURAVIT',        icon: 'fa-sink' },
-    { name: 'TIEMME',         icon: 'fa-screwdriver-wrench' },
-    { name: 'IMMERGAS',       icon: 'fa-gauge' },
-    { name: 'PAINI',          icon: 'fa-faucet-drip' },
-    { name: 'GEDY',           icon: 'fa-toothbrush' },
-];
+// (rimosso: già presente nella sezione Hero)
 
 // ── Services cards data ──────────────────────────────────────
 const SERVICES = [
     {
-        icon: 'fa-file-invoice-dollar',
+        icon: 'fas fa-file-invoice-dollar',
         color: 'from-blue-900 to-blue-700',
         accent: '#f97316',
         title: 'Listini Dedicati',
@@ -62,7 +45,7 @@ const SERVICES = [
         tag: 'Risposta in pochi minuti',
     },
     {
-        icon: 'fa-truck-fast',
+        icon: 'fas fa-truck-fast',
         color: 'from-orange-600 to-orange-400',
         accent: '#f97316',
         title: 'Consegna Rapida',
@@ -70,21 +53,21 @@ const SERVICES = [
         tag: 'Puntuale sempre',
     },
     {
-        icon: 'fa-headset',
+        icon: 'fas fa-headset',
         color: 'from-cyan-700 to-cyan-500',
         accent: '#06b6d4',
         title: 'Supporto Tecnico',
         desc: 'Il nostro team di esperti è a disposizione per consulenza su prodotti, compatibilità e specifiche tecniche di impianto.',
-        tag: 'Esperienza 30+ anni',
+        tag: 'Esperienza 40+ anni',
     },
 ];
 
 // ── Stats data ───────────────────────────────────────────────
 const STATS = [
-    { value: '30+',   label: 'Anni di Esperienza',   icon: 'fa-calendar-check' },
-    { value: '5.000+', label: 'Prodotti a Catalogo', icon: 'fa-boxes-stacked' },
-    { value: '200+',  label: 'Brand e Fornitori',    icon: 'fa-handshake' },
-    { value: '24h',   label: 'Tempo di Risposta',    icon: 'fa-bolt' },
+    { value: '40+',    label: 'Anni di Esperienza',  icon: 'fa-calendar-check' },
+    { value: '10.000+', label: 'Prodotti a Catalogo', icon: 'fa-boxes-stacked' },
+    { value: '200+',   label: 'Brand e Fornitori',   icon: 'fa-handshake' },
+    { value: '24h',    label: 'Tempo di Risposta',   icon: 'fa-bolt' },
 ];
 
 // ── Animated counter hook ────────────────────────────────────
@@ -261,28 +244,6 @@ const FornitureSection = () => {
             </div>
 
             {/* ══════════════════════════════════════════════════════
-                BRAND TICKER (infinite scroll)
-            ══════════════════════════════════════════════════════ */}
-            <div className="relative z-10 border-y border-white/5 py-6 overflow-hidden">
-                {/* Fade edges */}
-                <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-slate-950 to-transparent z-10 pointer-events-none" />
-                <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none" />
-
-                <div className="flex gap-0" style={{ animation: 'ticker 30s linear infinite' }}>
-                    {[...BRANDS, ...BRANDS].map((b, i) => (
-                        <div
-                            key={i}
-                            className="flex items-center gap-3 px-8 flex-shrink-0 text-slate-500 hover:text-white transition-colors duration-300 group"
-                        >
-                            <i className={`fas ${b.icon} text-lg group-hover:text-orange-400 transition-colors`}></i>
-                            <span className="text-sm font-bold uppercase tracking-[0.2em] whitespace-nowrap">{b.name}</span>
-                            <span className="text-slate-700 ml-4">·</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* ══════════════════════════════════════════════════════
                 CTA BLOCK
             ══════════════════════════════════════════════════════ */}
             <div className="relative z-10 container mx-auto px-6 py-20">
@@ -318,14 +279,6 @@ const FornitureSection = () => {
                                 <i className="fab fa-whatsapp text-2xl"></i>
                                 Scrivici su WhatsApp
                             </a>
-                            <a
-                                href="#contatti"
-                                onClick={(e) => smoothScroll(e, 'contatti')}
-                                className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white font-semibold py-4 px-8 rounded-2xl transition-all"
-                            >
-                                <i className="fas fa-envelope"></i>
-                                Richiedi Listino
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -336,10 +289,6 @@ const FornitureSection = () => {
                 @keyframes gradientShift {
                     0%   { background-position: 0% center; }
                     100% { background-position: 200% center; }
-                }
-                @keyframes ticker {
-                    0%   { transform: translateX(0); }
-                    100% { transform: translateX(-50%); }
                 }
                 @keyframes photoStrip {
                     0%   { transform: translateX(0); }
