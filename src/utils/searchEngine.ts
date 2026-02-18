@@ -198,7 +198,186 @@ const BRAND_ALIASES: Record<string, string[]> = {
 };
 
 // ─────────────────────────────────────────────
-// 3. FUNZIONI DI NORMALIZZAZIONE
+// 3. MAPPA INTENTO → CATEGORIE PRIMARIE
+// ─────────────────────────────────────────────
+// Quando l'utente cerca un termine generico (es. "tazza"),
+// queste sono le categorie che contengono il PRODOTTO VERO
+// (non gli accessori, non i ricambi).
+// Le keyword devono combaciare come SUBSTRING del campo category normalizzato.
+
+const INTENT_PRIMARY_CATS: Record<string, string[]> = {
+    // ── WC / Tazza ──────────────────────────────────────────
+    tazza:       ['sanitari in ceramica'],
+    wc:          ['sanitari in ceramica'],
+    water:       ['sanitari in ceramica'],
+    gabinetto:   ['sanitari in ceramica'],
+    cesso:       ['sanitari in ceramica'],
+    sanitario:   ['sanitari in ceramica'],
+    sanitari:    ['sanitari in ceramica'],
+    vaso:        ['sanitari in ceramica'],
+
+    // ── Bidet ────────────────────────────────────────────────
+    bidet:       ['sanitari in ceramica', 'moduli fix'],
+
+    // ── Lavabo / Lavandino ───────────────────────────────────
+    lavabo:      ['sanitari in ceramica', 'lavabi'],
+    lavabi:      ['sanitari in ceramica', 'lavabi'],
+    lavandino:   ['sanitari in ceramica', 'lavabi'],
+    lavello:     ['lavelli inox'],
+    lavelli:     ['lavelli inox'],
+
+    // ── Piatti doccia / Box ──────────────────────────────────
+    piatto:      ['piatti doccia'],
+    doccia:      ['piatti doccia', 'box doccia', 'set colonna'],
+    box:         ['box doccia'],
+    vasca:       ['vasche'],
+
+    // ── Soffioni / Set doccia ────────────────────────────────
+    soffione:    ['soffioni'],
+    soffioni:    ['soffioni'],
+    doccetta:    ['doccette'],
+    doccette:    ['doccette'],
+    saliscendi:  ['saliscendi'],
+    colonna:     ['set colonna'],
+
+    // ── Cassette ─────────────────────────────────────────────
+    cassetta:    ['cassette incasso', 'cassette a zaino'],
+    cassette:    ['cassette incasso', 'cassette a zaino'],
+    incasso:     ['cassette incasso'],
+    zaino:       ['cassette a zaino'],
+
+    // ── Rubinetteria ─────────────────────────────────────────
+    rubinetto:   ['rubinetteria monocomando', 'rubinetteria tre fori', 'rubinetteria tradizionale', 'rubinetteria leva'],
+    rubinetti:   ['rubinetteria monocomando', 'rubinetteria tre fori', 'rubinetteria tradizionale'],
+    miscelatore: ['rubinetteria monocomando', 'rubinetteria tre fori', 'miscelatori termostatici'],
+    miscelatori: ['rubinetteria monocomando', 'rubinetteria tre fori', 'miscelatori termostatici'],
+    monocomando: ['rubinetteria monocomando'],
+
+    // ── Caldaie ───────────────────────────────────────────────
+    caldaia:     ['caldaie a gas'],
+    caldaie:     ['caldaie a gas'],
+
+    // ── Scaldabagni ───────────────────────────────────────────
+    scaldabagno: ['scaldabagni'],
+    scaldabagni: ['scaldabagni'],
+    boiler:      ['scaldabagni'],
+    bollitore:   ['bollitori'],
+    scaldino:    ['scaldini a gas'],
+    scaldini:    ['scaldini a gas'],
+
+    // ── Radiatori ─────────────────────────────────────────────
+    radiatore:   ['radiatori in alluminio', 'radiatori tubolari', 'radiatori a gas'],
+    radiatori:   ['radiatori in alluminio', 'radiatori tubolari', 'radiatori a gas'],
+    termosifone: ['radiatori in alluminio', 'radiatori tubolari'],
+    scaldasalviette: ['radiatori scaldasalviette'],
+
+    // ── Stufe / Camini ────────────────────────────────────────
+    stufa:       ['stufe a pellet', 'stufe a legna'],
+    stufe:       ['stufe a pellet', 'stufe a legna'],
+    pellet:      ['stufe a pellet'],
+    termocamino: ['termocamini'],
+
+    // ── Termostati ────────────────────────────────────────────
+    termostato:  ['termostati ambiente', 'cronotermostati'],
+    termostati:  ['termostati ambiente', 'cronotermostati'],
+    cronotermostato: ['cronotermostati'],
+
+    // ── Valvole ───────────────────────────────────────────────
+    valvola:     ['valvole a sfera', 'valvole e detentori'],
+    valvole:     ['valvole a sfera', 'valvole e detentori'],
+
+    // ── Pompe / Circolatori ───────────────────────────────────
+    pompa:       ['elettropompe'],
+    pompe:       ['elettropompe'],
+    circolatore: ['circolatori'],
+    circolatori: ['circolatori'],
+
+    // ── Collettori ────────────────────────────────────────────
+    collettore:  ['collettori complanari', 'collettori lineari'],
+    collettori:  ['collettori complanari', 'collettori lineari'],
+
+    // ── Mobili / Arredo ───────────────────────────────────────
+    mobile:      ['mobili da bagno', 'mobili sottolavelli', 'mobili lavatoi'],
+    mobili:      ['mobili da bagno', 'mobili sottolavelli', 'mobili lavatoi'],
+    specchio:    ['specchi'],
+    specchi:     ['specchi'],
+
+    // ── Sifoni / Pilette ──────────────────────────────────────
+    sifone:      ['sifoni'],
+    sifoni:      ['sifoni'],
+    piletta:     ['pilette'],
+    pilette:     ['pilette'],
+
+    // ── Flessibili ────────────────────────────────────────────
+    flessibile:  ['flessibili inox', 'flessibili acciaio'],
+    flessibili:  ['flessibili inox', 'flessibili acciaio'],
+
+    // ── Climatizzatori ────────────────────────────────────────
+    climatizzatore: ['climatizzatori'],
+    climatizzatori: ['climatizzatori'],
+    condizionatore: ['climatizzatori'],
+};
+
+// ─────────────────────────────────────────────
+// 4. TIER DEL PRODOTTO (Main / Accessory / Spare)
+// ─────────────────────────────────────────────
+
+/** Classificazione tier del prodotto basata sul nome della categoria */
+type ProductTier = 'main' | 'accessory' | 'spare';
+
+// Keyword nel nome categoria che indicano ricambi (ultimo posto)
+const SPARE_KEYWORDS = ['ricambi', 'ricambio', 'cerniere di ricambio', 'paracolpi di ricambio'];
+
+// Keyword nel nome categoria che indicano accessori/kit (posto intermedio)
+const ACCESSORY_KEYWORDS = [
+    'accessori', 'complementi', 'cerniere', 'paracolpi',
+    'kit fissaggio', 'kit montaggio', 'fissaggi', 'supporti',
+    'tappi', 'riduzione', 'rosette', 'rosoni',
+];
+
+function detectProductTier(category: string): ProductTier {
+    const cat = normalize(category);
+    if (SPARE_KEYWORDS.some(k => cat.includes(k))) return 'spare';
+    if (ACCESSORY_KEYWORDS.some(k => cat.includes(k))) return 'accessory';
+    return 'main';
+}
+
+// ─────────────────────────────────────────────
+// 5. INTENTO DELLA QUERY
+// ─────────────────────────────────────────────
+
+/** L'utente sta cercando esplicitamente ricambi o accessori? */
+function detectQueryIntent(queryTokens: string[]): 'spare' | 'accessory' | 'main' {
+    const spareSignals = ['ricambi', 'ricambio', 'pezzo', 'pezzi', 'sostituzione', 'spare'];
+    const accessorySignals = ['accessori', 'accessorio', 'kit', 'complementi'];
+
+    if (queryTokens.some(t => spareSignals.includes(t))) return 'spare';
+    if (queryTokens.some(t => accessorySignals.includes(t))) return 'accessory';
+    return 'main';
+}
+
+/**
+ * Controlla se la categoria del prodotto corrisponde alle categorie primarie
+ * per almeno uno dei token della query.
+ * Ritorna true se il prodotto è il "prodotto principale" per questa ricerca.
+ */
+function isPrimaryProductForQuery(categoryNorm: string, queryTokens: string[]): boolean {
+    for (const token of queryTokens) {
+        // Controlla il token e tutti i suoi sinonimi
+        const expanded = [token, ...(SYNONYMS[token] ?? [])];
+        for (const term of expanded) {
+            const primaryCats = INTENT_PRIMARY_CATS[term];
+            if (!primaryCats) continue;
+            if (primaryCats.some(pc => categoryNorm.includes(normalize(pc)))) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// ─────────────────────────────────────────────
+// 6. FUNZIONI DI NORMALIZZAZIONE
 // ─────────────────────────────────────────────
 
 /** Normalizza una stringa: minuscolo, rimuove accenti, unifica separatori */
@@ -222,7 +401,7 @@ function tokenize(str: string): string[] {
 }
 
 // ─────────────────────────────────────────────
-// 4. FUZZY MATCHING (Levenshtein)
+// 7. FUZZY MATCHING (Levenshtein)
 // ─────────────────────────────────────────────
 
 /** Calcola la distanza di Levenshtein tra due stringhe */
@@ -260,7 +439,7 @@ function fuzzyContains(token: string, textTokens: string[]): boolean {
 }
 
 // ─────────────────────────────────────────────
-// 5. ESPANSIONE TOKEN CON SINONIMI
+// 8. ESPANSIONE TOKEN CON SINONIMI
 // ─────────────────────────────────────────────
 
 /** Restituisce il token + tutti i suoi sinonimi */
@@ -272,7 +451,7 @@ function expand(token: string): string[] {
 }
 
 // ─────────────────────────────────────────────
-// 6. SCORING PER SINGOLO TOKEN
+// 9. SCORING PER SINGOLO TOKEN
 // ─────────────────────────────────────────────
 
 interface FieldData {
@@ -306,7 +485,7 @@ function scoreTokenAgainstField(token: string, field: FieldData): number {
 }
 
 // ─────────────────────────────────────────────
-// 7. FUNZIONE PRINCIPALE DI SCORING PRODOTTO
+// 10. FUNZIONE PRINCIPALE DI SCORING PRODOTTO
 // ─────────────────────────────────────────────
 
 /**
@@ -321,16 +500,21 @@ const FIELD_WEIGHTS = {
     desc:     1,     // note/descrizione
 };
 
-interface ScoredProduct {
+export interface ScoredProduct {
     product: Product;
     score: number;
 }
 
 /**
  * Calcola il punteggio totale di un prodotto per una lista di token di query.
- * Restituisce 0 se ALMENO UN token non ha trovato match in NESSUN campo (AND logic).
+ * Include:
+ *  - AND logic (tutti i token devono matchare)
+ *  - Bonus per match nel nome / categoria
+ *  - Bonus per codice articolo
+ *  - Sistema TIER: prodotto principale > accessorio > ricambio
+ *  - Se l'utente cerca esplicitamente "ricambi" → tier ignorato
  */
-function scoreProduct(product: Product, queryTokens: string[]): number {
+function scoreProduct(product: Product, queryTokens: string[], queryIntent: 'main' | 'accessory' | 'spare'): number {
     // Prepara i campi del prodotto normalizzati
     const idText = normalize(String(product.id));
     const nameText = normalize(product.name);
@@ -369,7 +553,7 @@ function scoreProduct(product: Product, queryTokens: string[]): number {
 
     if (!allTokensMatched) return 0;
 
-    // ── BONUS ────────────────────────────────────────────────
+    // ── BONUS BASE ───────────────────────────────────────────
     // Bonus se TUTTI i token matchano nel solo campo nome
     const allInName = queryTokens.every(t =>
         expand(t).some(e => fields.name.text.includes(e))
@@ -388,11 +572,37 @@ function scoreProduct(product: Product, queryTokens: string[]): number {
         totalScore += 30;
     }
 
+    // ── SISTEMA TIER ─────────────────────────────────────────
+    // Se l'utente cerca ricambi/accessori specificamente → non applicare tier
+    if (queryIntent === 'main') {
+        const tier = detectProductTier(product.category);
+        const isPrimary = isPrimaryProductForQuery(catText, queryTokens);
+
+        if (isPrimary && tier === 'main') {
+            // Il prodotto È quello che l'utente cerca: fortissimo boost
+            totalScore += 50;
+        } else if (tier === 'main') {
+            // Prodotto principale ma non il tipo primario (es. cassette quando cerco tazza)
+            totalScore += 10;
+        } else if (tier === 'accessory') {
+            // Accessori: leggero calo
+            totalScore -= 10;
+        } else if (tier === 'spare') {
+            // Ricambi: penalità forte → finiscono in fondo
+            totalScore -= 40;
+        }
+    } else if (queryIntent === 'accessory') {
+        const tier = detectProductTier(product.category);
+        if (tier === 'accessory') totalScore += 20;
+        if (tier === 'spare')     totalScore -= 20;
+    }
+    // queryIntent === 'spare': niente aggiustamenti, l'utente vuole i ricambi
+
     return totalScore;
 }
 
 // ─────────────────────────────────────────────
-// 8. API PUBBLICA
+// 11. API PUBBLICA
 // ─────────────────────────────────────────────
 
 /**
@@ -409,15 +619,15 @@ export function smartSearch(products: Product[], query: string): Product[] {
     const queryTokens = tokenize(trimmed);
     if (queryTokens.length === 0) return products;
 
-    // Calcola score per ogni prodotto
+    const queryIntent = detectQueryIntent(queryTokens);
+
     const scored: ScoredProduct[] = products
         .map(product => ({
             product,
-            score: scoreProduct(product, queryTokens),
+            score: scoreProduct(product, queryTokens, queryIntent),
         }))
         .filter(sp => sp.score > 0);
 
-    // Ordina per score decrescente
     scored.sort((a, b) => b.score - a.score);
 
     return scored.map(sp => sp.product);
@@ -433,8 +643,10 @@ export function smartSearchWithScore(products: Product[], query: string): Scored
     const queryTokens = tokenize(trimmed);
     if (queryTokens.length === 0) return products.map(p => ({ product: p, score: 0 }));
 
+    const queryIntent = detectQueryIntent(queryTokens);
+
     return products
-        .map(product => ({ product, score: scoreProduct(product, queryTokens) }))
+        .map(product => ({ product, score: scoreProduct(product, queryTokens, queryIntent) }))
         .filter(sp => sp.score > 0)
         .sort((a, b) => b.score - a.score);
 }
