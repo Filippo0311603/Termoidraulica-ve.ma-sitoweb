@@ -2,6 +2,28 @@
 import { SOCIAL_LINKS } from '../utils/constants';
 import { smoothScroll } from '../utils';
 
+// ── Foto reali del negozio / forniture ──────────────────────
+import fotoForniture1 from '../assets/images/foto-forniture.webp';
+import fotoForniture2 from '../assets/images/foto-forniture2.webp';
+import fotoForniture3 from '../assets/images/foto forniture3.webp';
+import fotoForniture4 from '../assets/images/foto-forniture4.webp';
+import fotoForniture5 from '../assets/images/foto-forniture5.webp';
+import fotoForniture6 from '../assets/images/foto-forniture6.webp';
+import fotoForniture7 from '../assets/images/foto-forniture7.webp';
+import fotoForniture8 from '../assets/images/foto-forniture8.webp';
+import fotoNegozio   from '../assets/images/negozio.webp';
+
+const GALLERY_PHOTOS = [
+    { src: fotoForniture1, alt: 'Magazzino forniture idrauliche' },
+    { src: fotoForniture2, alt: 'Esposizione prodotti' },
+    { src: fotoForniture3, alt: 'Forniture termoidrauliche' },
+    { src: fotoForniture4, alt: 'Rubinetteria ed accessori' },
+    { src: fotoForniture5, alt: 'Prodotti a catalogo' },
+    { src: fotoForniture6, alt: 'Materiale idraulico' },
+    { src: fotoForniture7, alt: 'Forniture professionali' },
+    { src: fotoForniture8, alt: 'Punto vendita termoidraulica' },
+];
+
 // ── Brand ticker data ────────────────────────────────────────
 const BRANDS = [
     { name: 'GEBERIT',        icon: 'fa-toilet' },
@@ -210,6 +232,35 @@ const FornitureSection = () => {
             </div>
 
             {/* ══════════════════════════════════════════════════════
+                PHOTO STRIP (scorrimento infinito)
+            ══════════════════════════════════════════════════════ */}
+            <div className="relative z-10 py-10 overflow-hidden">
+                {/* Fade edges */}
+                <div className="absolute left-0 top-0 h-full w-32 bg-gradient-to-r from-slate-950 to-transparent z-10 pointer-events-none" />
+                <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none" />
+
+                {/* Striscia scorrevole */}
+                <div
+                    className="flex gap-4"
+                    style={{ animation: 'photoStrip 40s linear infinite', width: 'max-content' }}
+                >
+                    {[...GALLERY_PHOTOS, ...GALLERY_PHOTOS].map((photo, i) => (
+                        <div
+                            key={i}
+                            className="flex-shrink-0 w-72 h-48 rounded-2xl overflow-hidden border border-white/10 group"
+                        >
+                            <img
+                                src={photo.src}
+                                alt={photo.alt}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 brightness-75 group-hover:brightness-100"
+                                loading="lazy"
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* ══════════════════════════════════════════════════════
                 BRAND TICKER (infinite scroll)
             ══════════════════════════════════════════════════════ */}
             <div className="relative z-10 border-y border-white/5 py-6 overflow-hidden">
@@ -235,41 +286,47 @@ const FornitureSection = () => {
                 CTA BLOCK
             ══════════════════════════════════════════════════════ */}
             <div className="relative z-10 container mx-auto px-6 py-20">
-                <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-blue-900/40 to-slate-900/60 backdrop-blur-sm p-10 md:p-14 flex flex-col md:flex-row items-center gap-10">
+                <div className="relative rounded-3xl overflow-hidden border border-white/10">
+                    {/* Foto negozio reale come sfondo */}
+                    <img
+                        src={fotoNegozio}
+                        alt="Il nostro negozio"
+                        className="absolute inset-0 w-full h-full object-cover brightness-[0.25]"
+                    />
+                    {/* Overlay gradiente */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-slate-900/40 to-slate-950/80" />
 
-                    {/* Decorative circle */}
-                    <div className="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
-                    <div className="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
+                    <div className="relative z-10 p-10 md:p-14 flex flex-col md:flex-row items-center gap-10">
+                        <div className="flex-1 text-center md:text-left">
+                            <p className="text-orange-400 text-sm font-bold uppercase tracking-widest mb-3">Sei un professionista?</p>
+                            <h3 className="text-3xl md:text-4xl font-black text-white leading-tight mb-4">
+                                Inizia subito a<br />
+                                <span className="text-orange-400">risparmiare sui materiali</span>
+                            </h3>
+                            <p className="text-slate-400 text-lg max-w-md">
+                                Contattaci per accedere ai listini riservati, agli ordini WhatsApp prioritari e alla consulenza tecnica dedicata.
+                            </p>
+                        </div>
 
-                    <div className="flex-1 text-center md:text-left relative z-10">
-                        <p className="text-orange-400 text-sm font-bold uppercase tracking-widest mb-3">Sei un professionista?</p>
-                        <h3 className="text-3xl md:text-4xl font-black text-white leading-tight mb-4">
-                            Inizia subito a<br />
-                            <span className="text-orange-400">risparmiare sui materiali</span>
-                        </h3>
-                        <p className="text-slate-400 text-lg max-w-md">
-                            Contattaci per accedere ai listini riservati, agli ordini WhatsApp prioritari e alla consulenza tecnica dedicata.
-                        </p>
-                    </div>
-
-                    <div className="flex flex-col gap-4 flex-shrink-0 relative z-10 w-full md:w-auto">
-                        <a
-                            href={SOCIAL_LINKS.whatsapp}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-400 text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-lg shadow-green-500/20 hover:shadow-green-400/30 hover:scale-105 text-lg"
-                        >
-                            <i className="fab fa-whatsapp text-2xl"></i>
-                            Scrivici su WhatsApp
-                        </a>
-                        <a
-                            href="#contatti"
-                            onClick={(e) => smoothScroll(e, 'contatti')}
-                            className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white font-semibold py-4 px-8 rounded-2xl transition-all"
-                        >
-                            <i className="fas fa-envelope"></i>
-                            Richiedi Listino
-                        </a>
+                        <div className="flex flex-col gap-4 flex-shrink-0 relative z-10 w-full md:w-auto">
+                            <a
+                                href={SOCIAL_LINKS.whatsapp}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-400 text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-lg shadow-green-500/20 hover:shadow-green-400/30 hover:scale-105 text-lg"
+                            >
+                                <i className="fab fa-whatsapp text-2xl"></i>
+                                Scrivici su WhatsApp
+                            </a>
+                            <a
+                                href="#contatti"
+                                onClick={(e) => smoothScroll(e, 'contatti')}
+                                className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white font-semibold py-4 px-8 rounded-2xl transition-all"
+                            >
+                                <i className="fas fa-envelope"></i>
+                                Richiedi Listino
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -281,6 +338,10 @@ const FornitureSection = () => {
                     100% { background-position: 200% center; }
                 }
                 @keyframes ticker {
+                    0%   { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                @keyframes photoStrip {
                     0%   { transform: translateX(0); }
                     100% { transform: translateX(-50%); }
                 }
