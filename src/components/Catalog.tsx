@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { Product } from '../types';
 import { COLORS } from '../utils/constants';
 import ProductImage from './ProductImage';
 import ProductModal from './ProductModal';
+import { smartSearch } from '../utils/searchEngine';
 
 const Catalog = ({
     products,
@@ -40,76 +41,22 @@ const Catalog = ({
     uniqueCategories.sort();
     const categories = ["Tutti", ...uniqueCategories];
 
-    const filteredProducts = products.filter(product => {
-        const matchesCategory = activeCat === "Tutti" || product.category === activeCat;
+    // ========== SMART SEARCH ENGINE (v2) ==========
+    // Ricerca avanzata con sinonimi italiani, fuzzy matching e scoring ponderato
+    const filteredProducts = useMemo(() => {
+        // 1. Applica filtro di categoria
+        let results = activeCat === "Tutti"
+            ? products
+            : products.filter(p => p.category === activeCat);
 
-        if (!searchQuery.trim()) return matchesCategory;
+        // 2. Se c'è una query, delega al motore avanzato
+        // Il motore: espande sinonimi, tolera typo, ordina per rilevanza
+        if (searchQuery.trim()) {
+            results = smartSearch(results, searchQuery);
+        }
 
-        const searchTerms = searchQuery.toLowerCase().trim().split(/\s+/);
-        const productDataString = `
-        ${product.name} 
-        ${product.id} 
-        ${product.category} 
-        ${product.desc} 
-        ${product.specs ? product.specs.join(" ") : ""}
-      `.toLowerCase();
-
-        const matchesSearch = searchTerms.every(term => productDataString.includes(term));
-
-        return matchesCategory && matchesSearch;
-    }).sort((a, b) => {
-        if (!searchQuery.trim()) return 0;
-        
-        const query = searchQuery.toLowerCase().trim();
-        
-        const getScore = (p: Product) => {
-            const name = p.name.toLowerCase();
-            let score = 0;
-            
-            // 1. Corrispondenza Esatta (Priorità Massima)
-            if (name === query) score = 100;
-            
-            // 2. Inizia con la query (Priorità Alta) - es. "Bidet ..." appare prima di "Sifone Bidet"
-            else if (name.startsWith(query)) score = 80;
-            
-            // 3. Contiene la query come parola intera (Priorità Media)
-            else if (` ${name} `.includes(` ${query} `)) score = 60;
-            
-            // 4. Contiene la query come sottostringa nel nome (Priorità Bassa)
-            else if (name.includes(query)) score = 40;
-            
-            // 5. Match nella categoria
-            else if (p.category.toLowerCase().includes(query)) score = 20;
-            
-            // --- LOGICA INTELLIGENTE ---
-            
-            // A. Penalità Accessori
-            // Se stiamo cercando un prodotto principale (es. "Bidet"), penalizziamo gli accessori che contengono quella parola
-            const accessoryWords = ["sifone", "rubinetto", "miscelatore", "kit", "fissaggio", "staffa", "curva", "manicotto", "sedile", "copriwater", "asse", "tavoletta", "placca", "cassetta", "canotto", "raccordo", "piletta", "accessorio", "ricambio", "flessibile", "gomito", "riduzione"];
-            
-            // Applichiamo la penalità solo se la query NON è essa stessa un accessorio
-            // (es. se cerco "sifone", non devo penalizzare i sifoni)
-            const isSearchingForAccessory = accessoryWords.some(w => query.includes(w));
-            
-            if (!isSearchingForAccessory) {
-                if (accessoryWords.some(word => name.includes(word))) {
-                    score -= 30; // Penalità significativa per spingerli in fondo
-                }
-            }
-
-            // B. Boost Sinonimi / Concetti
-            // Se cerco "sanitari", voglio vedere Vasi e Bidet, non solo cose che si chiamano "sanitari"
-            if (query.includes('sanitari')) {
-                if (name.includes('vaso') || name.includes('bidet') || name.includes('wc')) {
-                    score += 50; // Boost molto alto per farli superare i match parziali
-                }
-            }
-            
-            return score;
-        };
-
-        return getScore(b) - getScore(a);
-    });
+        return results;
+    }, [products, activeCat, searchQuery]);
 
     const visibleProducts = filteredProducts.slice(0, visibleCount);
 
@@ -146,7 +93,7 @@ const Catalog = ({
                         <div className="relative w-full">
                             <input
                                 type="text"
-                                placeholder="Cerca (es. 'Galleggiante', 'Geberit 7300', 'Caldaia 24kw')..."
+                                placeholder="Cerca per nome, codice o sinonimo (es. 'tazza', 'lavandino', 'caldaia ferroli', '73000')..."
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 disabled={isLoading}
@@ -202,7 +149,7 @@ const Catalog = ({
                         <>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {visibleProducts.length > 0 ? (
-                                    visibleProducts.map((product) => (
+                                    visibleProducts.map((product: Product) => (
                                         <div key={product.id} className="product-enter group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer relative" onClick={() => setSelectedProduct(product)}>
 
                                             <ProductImage
