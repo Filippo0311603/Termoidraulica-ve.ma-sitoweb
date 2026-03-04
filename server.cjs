@@ -27,17 +27,32 @@ app.use(helmet({
 }));
 app.use(cors()); 
 
-// Rate Limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+// Rate Limiting - applicato SOLO alle API, non ai file statici
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minuti
+    max: 300, // 300 chiamate API per IP ogni 15 minuti
+    message: { error: 'Troppe richieste, riprova tra qualche minuto.' },
+    standardHeaders: true,
+    legacyHeaders: false,
 });
-app.use(limiter);
+
+// Limiter più stretto solo per auth e checkout (prevenzione brute-force)
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: { error: 'Troppi tentativi di accesso, riprova tra 15 minuti.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 app.use(express.json());
 
-// Serve static files from the React app
+// Serve static files PRIMA del rate limiter — le risorse statiche non devono essere limitate
 app.use(express.static(path.join(__dirname, 'dist')));
+
+// Applica il rate limiter solo alle chiamate API
+app.use('/api', apiLimiter);
+app.use('/auth', authLimiter);
 
 // Middleware di Autenticazione
 const authenticateToken = (req, res, next) => {
@@ -261,7 +276,7 @@ app.delete('/auth/me', authenticateToken, async (req, res) => {
 });
 
 // STRIPE
-app.post('/create-payment-intent', async (req, res) => {
+app.post('/create-payment-intent', apiLimiter, async (req, res) => {
   const { amount, currency, receipt_email } = req.body;
 
   if (!stripe) {
