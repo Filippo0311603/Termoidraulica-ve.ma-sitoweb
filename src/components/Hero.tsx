@@ -1,20 +1,21 @@
 import { COLORS } from '../utils/constants';
 import { smoothScroll } from '../utils';
 
-const HERO_IMAGE_URL = "/hero.webp";
-
 const Hero = () => {
     return (
         <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
             <div className="absolute inset-0 z-0">
-                <img
-                    src={HERO_IMAGE_URL}
-                    alt="Showroom Termoidraulica"
-                    className="w-full h-full object-cover"
-                    fetchPriority="high"
-                    width="1920"
-                    height="1080"
-                />
+                <picture>
+                    <source media="(max-width: 767px)" srcSet="/hero-mobile.webp" />
+                    <img
+                        src="/hero.webp"
+                        alt="Showroom Termoidraulica"
+                        className="w-full h-full object-cover"
+                        fetchPriority="high"
+                        width="1920"
+                        height="1080"
+                    />
+                </picture>
                 <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-blue-900/90 to-blue-900/30"></div>
             </div>
             <div className="container mx-auto px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
