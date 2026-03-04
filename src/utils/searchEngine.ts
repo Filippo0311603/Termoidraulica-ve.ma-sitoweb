@@ -141,9 +141,80 @@ const SYNONYMS: Record<string, string[]> = {
     autoclave:    ['autoclavi', 'vaso', 'membrana', 'espansione'],
     riduttore:    ['riduttori', 'pressione', 'acqua'],
 
-    // ── Accessori Bagno ──────────────────────────────────────
-    sedile:       ['sedili', 'wc', 'abs', 'termoindurente'],
-    sedili:       ['sedile', 'wc', 'abs'],
+    // ── WC - termini colloquiali non professionisti ──────────
+    // NOTA: NON includere 'wc' come sinonimo qui perché è substring
+    // del nome dei vasi ("VASO WC SOSPESO") e causerebbe falsi match.
+    copriwater:   ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
+    tavoletta:    ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
+    asse:         ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
+    ciambella:    ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
+    tazzone:      ['vaso', 'wc', 'tazza', 'sanitari'],
+    sciacquone:   ['cassetta', 'cassette', 'scarico', 'risciacquo'],
+    vaschetta:    ['cassetta', 'cassette', 'zaino', 'scarico'],
+    pulsante:     ['placca', 'placche', 'scarico', 'cassetta'],
+    bottone:      ['placca', 'placche', 'scarico', 'pulsante'],
+    tastiera:     ['placca', 'placche', 'comando', 'scarico'],
+    cannotto:     ['tubo', 'raccordo', 'cassetta', 'cacciata'],
+    cacciata:     ['cannotto', 'tubo', 'cassetta', 'scarico'],
+    gommino:      ['guarnizione', 'guarnizioni', 'tenuta', 'oring'],
+    oring:        ['guarnizione', 'guarnizioni', 'tenuta', 'gommino'],
+    anellino:     ['guarnizione', 'guarnizioni', 'oring', 'tenuta'],
+    collo:        ['sifone', 'sifoni', 'scarico'],              // "collo d'oca"
+    saltarello:   ['piletta', 'pilette', 'scarico', 'tappo'],
+    tappo:        ['piletta', 'pilette', 'scarico'],
+
+    // ── Lavabo / Cucina - termini colloquiali ─────────────────
+    catinella:    ['lavabo', 'lavandino', 'lavabi'],
+    acquaio:      ['lavello', 'cucina', 'inox'],
+    lavapiatti:   ['lavello', 'cucina', 'inox'],
+    lavatoio:     ['lavatoi', 'panni'],
+    pilozzo:      ['lavatoio', 'lavatoi', 'panni'],
+    fontana:      ['miscelatore', 'rubinetto', 'rubinetteria'],
+
+    // ── Doccia - termini colloquiali ──────────────────────────
+    doccino:      ['doccetta', 'doccette', 'doccia', 'soffione'],
+    microfono:    ['doccetta', 'doccette', 'doccia'],
+    cipolla:      ['soffione', 'soffioni', 'doccia'],
+    doccione:     ['soffione', 'soffioni', 'doccia'],
+    pigna:        ['soffione', 'soffioni', 'doccia'],
+    laccio:       ['flessibile', 'flessibili', 'doccia'],
+    cordino:      ['flessibile', 'flessibili', 'doccia'],
+    asta:         ['saliscendi', 'doccia', 'colonna'],
+    palo:         ['saliscendi', 'doccia', 'colonna', 'asta'],
+    cabina:       ['box', 'doccia', 'cristallo'],
+    vetri:        ['box', 'doccia', 'cristallo', 'vetro'],
+    base:         ['piatto', 'doccia', 'acrilico'],
+
+    // ── Minuteria / Tenuta - termini colloquiali ──────────────
+    rompigetto:   ['aeratore', 'aeratori', 'rubinetteria'],
+    aeratore:     ['aeratori', 'rompigetto', 'rubinetteria'],
+    aeratori:     ['aeratore', 'rompigetto', 'rubinetteria'],
+    retina:       ['aeratore', 'aeratori', 'filtro', 'filtri'],
+    filtrino:     ['aeratore', 'aeratori', 'filtro'],
+    teflon:       ['nastro', 'ptfe', 'sigillante', 'tenuta'],
+    ptfe:         ['teflon', 'nastro', 'tenuta'],
+    nastro:       ['teflon', 'ptfe', 'sigillante'],
+    canapa:       ['stoppa', 'sigillante', 'tenuta', 'lino'],
+    stoppa:       ['canapa', 'sigillante', 'tenuta'],
+    vitone:       ['cartuccia', 'cartucce', 'miscelatore', 'ricambio'],
+    multistrato:  ['tubi', 'tubo', 'raccordo', 'raccordi', 'pex'],
+
+    // ── Riscaldamento - termini colloquiali ───────────────────
+    calorifero:   ['radiatore', 'radiatori', 'alluminio', 'termosifone'],
+    elemento:     ['radiatore', 'radiatori', 'alluminio', 'fondital'],
+    scaldacqua:   ['scaldabagno', 'scaldabagni', 'boiler', 'elettrico'],
+    split:        ['climatizzatore', 'climatizzatori', 'condizionatore'],
+    detentore:    ['detentori', 'valvola', 'valvole', 'radiatore'],
+    manopola:     ['valvola', 'termostatica', 'detentore', 'radiatore'],
+    centralina:   ['cronotermostato', 'termostato', 'programmatore'],
+    candeletta:   ['elettrodo', 'caldaia', 'accensione', 'ricambi'],
+    elettrodo:    ['candeletta', 'caldaia', 'accensione', 'ricambi'],
+    ventola:      ['unita esterna', 'condizionatore', 'climatizzatore'],
+    rotella:      ['valvola', 'termostatica', 'detentore', 'radiatore'],
+
+    // ── Accessori Bagno ───────────────────────────────────────
+    sedile:       ['sedili', 'abs', 'termoindurente', 'copriwater'],
+    sedili:       ['sedile', 'abs', 'termoindurente', 'copriwater'],
     accessori:    ['accessori', 'bagno', 'ottone'],
     specchio:     ['specchi', 'abs', 'filo', 'applique'],
     mobile:       ['mobili', 'bagno', 'classici', 'moderni'],
@@ -208,6 +279,7 @@ const BRAND_ALIASES: Record<string, string[]> = {
 const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     // ── WC / Tazza ──────────────────────────────────────────
     tazza:       ['sanitari in ceramica'],
+    tazzone:     ['sanitari in ceramica'],
     wc:          ['sanitari in ceramica'],
     water:       ['sanitari in ceramica'],
     gabinetto:   ['sanitari in ceramica'],
@@ -216,6 +288,25 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     sanitari:    ['sanitari in ceramica'],
     vaso:        ['sanitari in ceramica'],
 
+    // ── Sedili / Copriwater ───────────────────────────────────
+    sedile:      ['sedili wc', 'accessori wc'],
+    sedili:      ['sedili wc', 'accessori wc'],
+    copriwater:  ['sedili wc', 'accessori wc'],
+    tavoletta:   ['sedili wc', 'accessori wc'],
+    asse:        ['sedili wc', 'accessori wc'],
+    ciambella:   ['sedili wc', 'accessori wc'],
+
+    // ── Sciacquone / Cassette ─────────────────────────────────
+    sciacquone:  ['cassette incasso', 'cassette a zaino'],
+    vaschetta:   ['cassette incasso', 'cassette a zaino'],
+
+    // ── Placche scarico ───────────────────────────────────────
+    placca:      ['placche di comando', 'accessori cassette'],
+    placche:     ['placche di comando', 'accessori cassette'],
+    pulsante:    ['placche di comando', 'accessori cassette'],
+    bottone:     ['placche di comando', 'accessori cassette'],
+    tastiera:    ['placche di comando', 'accessori cassette'],
+
     // ── Bidet ────────────────────────────────────────────────
     bidet:       ['sanitari in ceramica', 'moduli fix'],
 
@@ -223,21 +314,37 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     lavabo:      ['sanitari in ceramica', 'lavabi'],
     lavabi:      ['sanitari in ceramica', 'lavabi'],
     lavandino:   ['sanitari in ceramica', 'lavabi'],
+    catinella:   ['sanitari in ceramica', 'lavabi'],
     lavello:     ['lavelli inox'],
     lavelli:     ['lavelli inox'],
+    acquaio:     ['lavelli inox'],
+    lavapiatti:  ['lavelli inox'],
+    lavatoio:    ['lavatoi'],
+    pilozzo:     ['lavatoi'],
 
     // ── Piatti doccia / Box ──────────────────────────────────
     piatto:      ['piatti doccia'],
+    base:        ['piatti doccia'],
     doccia:      ['piatti doccia', 'box doccia', 'set colonna'],
     box:         ['box doccia'],
     vasca:       ['vasche'],
+    cabina:      ['box doccia'],
+    vetri:       ['box doccia'],
 
     // ── Soffioni / Set doccia ────────────────────────────────
     soffione:    ['soffioni'],
     soffioni:    ['soffioni'],
+    cipolla:     ['soffioni'],
+    doccione:    ['soffioni'],
+    pigna:       ['soffioni'],
     doccetta:    ['doccette'],
     doccette:    ['doccette'],
+    doccino:     ['doccette'],
+    microfono:   ['doccette'],
+
     saliscendi:  ['saliscendi'],
+    asta:        ['saliscendi'],
+    palo:        ['saliscendi'],
     colonna:     ['set colonna'],
 
     // ── Cassette ─────────────────────────────────────────────
@@ -249,6 +356,7 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     // ── Rubinetteria ─────────────────────────────────────────
     rubinetto:   ['rubinetteria monocomando', 'rubinetteria tre fori', 'rubinetteria tradizionale', 'rubinetteria leva'],
     rubinetti:   ['rubinetteria monocomando', 'rubinetteria tre fori', 'rubinetteria tradizionale'],
+    fontana:     ['rubinetteria monocomando', 'rubinetteria tre fori'],
     miscelatore: ['rubinetteria monocomando', 'rubinetteria tre fori', 'miscelatori termostatici'],
     miscelatori: ['rubinetteria monocomando', 'rubinetteria tre fori', 'miscelatori termostatici'],
     monocomando: ['rubinetteria monocomando'],
@@ -260,6 +368,7 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     // ── Scaldabagni ───────────────────────────────────────────
     scaldabagno: ['scaldabagni'],
     scaldabagni: ['scaldabagni'],
+    scaldacqua:  ['scaldabagni'],
     boiler:      ['scaldabagni'],
     bollitore:   ['bollitori'],
     scaldino:    ['scaldini a gas'],
@@ -269,6 +378,8 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     radiatore:   ['radiatori in alluminio', 'radiatori tubolari', 'radiatori a gas'],
     radiatori:   ['radiatori in alluminio', 'radiatori tubolari', 'radiatori a gas'],
     termosifone: ['radiatori in alluminio', 'radiatori tubolari'],
+    calorifero:  ['radiatori in alluminio', 'radiatori tubolari'],
+    elemento:    ['radiatori in alluminio', 'radiatori tubolari'],
     scaldasalviette: ['radiatori scaldasalviette'],
 
     // ── Stufe / Camini ────────────────────────────────────────
@@ -281,10 +392,15 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     termostato:  ['termostati ambiente', 'cronotermostati'],
     termostati:  ['termostati ambiente', 'cronotermostati'],
     cronotermostato: ['cronotermostati'],
+    centralina:  ['cronotermostati'],
 
     // ── Valvole ───────────────────────────────────────────────
     valvola:     ['valvole a sfera', 'valvole e detentori'],
     valvole:     ['valvole a sfera', 'valvole e detentori'],
+    detentore:   ['valvole e detentori'],
+    detentori:   ['valvole e detentori'],
+    manopola:    ['valvole termostatiche', 'valvole e detentori'],
+    rotella:     ['valvole termostatiche', 'valvole e detentori'],
 
     // ── Pompe / Circolatori ───────────────────────────────────
     pompa:       ['elettropompe'],
@@ -305,17 +421,30 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     // ── Sifoni / Pilette ──────────────────────────────────────
     sifone:      ['sifoni'],
     sifoni:      ['sifoni'],
+    collo:       ['sifoni'],              // "collo d'oca"
     piletta:     ['pilette'],
     pilette:     ['pilette'],
+    saltarello:  ['pilette'],
+    tappo:       ['pilette'],
+
+    // ── Minuteria / Tenuta ────────────────────────────────────
+    aeratore:    ['aeratori'],
+    aeratori:    ['aeratori'],
+    rompigetto:  ['aeratori'],
+    retina:      ['aeratori'],
+    filtrino:    ['aeratori'],
 
     // ── Flessibili ────────────────────────────────────────────
     flessibile:  ['flessibili inox', 'flessibili acciaio'],
     flessibili:  ['flessibili inox', 'flessibili acciaio'],
+    laccio:      ['flessibili doccia', 'flessibili inox'],
+    cordino:     ['flessibili doccia', 'flessibili inox'],
 
     // ── Climatizzatori ────────────────────────────────────────
     climatizzatore: ['climatizzatori'],
     climatizzatori: ['climatizzatori'],
     condizionatore: ['climatizzatori'],
+    split:          ['climatizzatori'],
 };
 
 // ─────────────────────────────────────────────
