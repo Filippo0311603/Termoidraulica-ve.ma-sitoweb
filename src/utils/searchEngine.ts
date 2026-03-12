@@ -50,7 +50,6 @@ const SYNONYMS: Record<string, string[]> = {
     sospeso:         ['sospesi', 'pensile', 'parete', 'murale'],
     sospesi:         ['sospeso', 'pensile', 'parete'],
     filo:            ['filo parete', 'parete', 'sospeso'],   // "filo parete"
-    monoforo:        ['foro', 'lavabo', 'lavandino'],
 
     // ── Sedile / Copriwater ───────────────────────────────────
     sedile:          ['sedili', 'abs', 'termoindurente', 'copriwater', 'tavoletta'],
@@ -102,7 +101,6 @@ const SYNONYMS: Record<string, string[]> = {
     box:             ['doccia', 'cabina', 'cristallo', 'vetro', 'acrilico'],
     cabina:          ['box', 'doccia', 'cristallo', 'vetro'],
     vetri:           ['box', 'doccia', 'cristallo', 'vetro'],
-    parete:          ['box', 'doccia', 'vetro', 'pannello'],  // "parete doccia"
     soffietto:       ['box', 'pvc', 'doccia'],
 
     // ════════════════════════════════════════════════════════════
@@ -180,21 +178,18 @@ const SYNONYMS: Record<string, string[]> = {
     cipolla:         ['soffione', 'soffioni'],
     pigna:           ['soffione', 'soffioni'],
     microfono:       ['doccetta', 'doccette', 'doccia'],
-    colonna:         ['set colonna', 'doccia', 'saliscendi', 'pannello'],
     'set doccia':    ['colonna', 'saliscendi', 'soffione', 'doccetta'],
     saliscendi:      ['doccia', 'colonna', 'asta', 'barra'],
     asta:            ['saliscendi', 'doccia', 'colonna', 'barra'],
     palo:            ['saliscendi', 'doccia', 'colonna', 'asta'],
-    barra:           ['saliscendi', 'asta', 'doccia'],
+    barra:           ['saliscendi', 'asta'],
     laccio:          ['flessibile', 'flessibili', 'doccia', 'tubo spirale'],
     cordino:         ['flessibile', 'flessibili', 'doccia'],
     'tubo doccia':   ['flessibile', 'flessibili', 'doccia', 'laccio'],
-    pannello:        ['pannelli doccia', 'colonna', 'doccia', 'inox'],
     'pannello doccia': ['pannelli doccia', 'colonna', 'inox', 'abs'],
-    duplex:          ['doccia', 'pannello', 'colonna', 'set'],
-    braccio:         ['bracci doccia', 'soffione', 'doccia'],
-    curva:           ['doccia', 'curva doccia', 'ottone', 'inox'],
-    sgabello:        ['sgabelli doccia', 'durolite', 'doccia'],
+    duplex:          ['pannelli doccia', 'colonna doccia', 'set doccia'],
+    braccio:         ['bracci doccia', 'soffione'],
+    sgabello:        ['sgabelli doccia', 'durolite'],
 
     // ════════════════════════════════════════════════════════════
     // SIFONI / PILETTE / SCARICHI
@@ -261,7 +256,6 @@ const SYNONYMS: Record<string, string[]> = {
     ritegno:         ['valvola', 'ritegno', 'non ritorno'],
     sfogo:           ['valvola', 'sfogo aria', 'radiatori'],
     sfiato:          ['sfogo', 'valvola', 'aria', 'radiatori'],
-    pressostato:     ['pressostati', 'pressione', 'pompa'],
 
     // ════════════════════════════════════════════════════════════
     // COLLETTORI / IMPIANTI A PANNELLI
@@ -358,7 +352,7 @@ const SYNONYMS: Record<string, string[]> = {
     // IMPIANTO SOLARE
     // ════════════════════════════════════════════════════════════
     solare:          ['pannelli solari', 'kit solare', 'circolazione', 'bollitore', 'puffer', 'far'],
-    pannello:        ['pannelli solari', 'solare', 'kit', 'ferroli'],
+    pannello:        ['pannelli doccia', 'pannelli solari', 'colonna', 'solare', 'inox', 'ferroli'],
     pannelli:        ['pannello', 'solari', 'solare', 'kit', 'ferroli'],
     'kit solare':    ['solare', 'pannelli', 'circolazione', 'bollitore'],
     termico:         ['solare', 'pannelli', 'collettore'],
@@ -427,12 +421,11 @@ const SYNONYMS: Record<string, string[]> = {
     specchiera:      ['specchio', 'specchi', 'mobile', 'bagno'],
     applique:        ['specchio', 'illuminazione', 'bagno'],
     pensile:         ['mobile', 'sospeso', 'bagno', 'arredo'],
-    colonna:         ['mobile', 'bagno', 'pensile', 'arredo'],   // mobile colonna
+    colonna:         ['set colonna', 'mobile', 'bagno', 'pensile', 'arredo'],
     'porta biancheria': ['porta biancheria', 'cestino', 'bagno'],
     'porta scopino': ['porta scopino', 'scopino', 'bagno'],
 
     // ── Accessori bagno ───────────────────────────────────────
-    sedile:          ['sedili', 'abs', 'termoindurente', 'copriwater', 'tavoletta'],
     accessori:       ['accessori bagno', 'ottone', 'gedy', 'saniplast'],
     portasapone:     ['sapone', 'accessori', 'bagno', 'gedy'],
     portarotolo:     ['carta', 'accessori', 'bagno', 'gedy'],
@@ -655,6 +648,7 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     // ── Piatti doccia / Box ──────────────────────────────────
     piatto:      ['piatti doccia'],
     base:        ['piatti doccia'],
+    pannello:    ['pannelli doccia', 'pannelli solari'],
     doccia:      ['piatti doccia', 'box doccia', 'set colonna'],
     box:         ['box doccia'],
     vasca:       ['vasche'],
@@ -675,7 +669,10 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     saliscendi:  ['saliscendi'],
     asta:        ['saliscendi'],
     palo:        ['saliscendi'],
+    barra:       ['saliscendi'],
     colonna:     ['set colonna'],
+    braccio:     ['bracci doccia'],
+    sgabello:    ['sgabelli doccia'],
 
     // ── Cassette ─────────────────────────────────────────────
     cassetta:    ['cassette incasso', 'cassette a zaino'],
@@ -701,6 +698,7 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     scaldacqua:  ['scaldabagni'],
     boiler:      ['scaldabagni'],
     bollitore:   ['bollitori'],
+    solare:      ['pannelli solari', 'kit solare'],
     scaldino:    ['scaldini a gas'],
     scaldini:    ['scaldini a gas'],
 
