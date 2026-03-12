@@ -24,254 +24,546 @@ import type { Product } from '../types';
 // Valore = lista di termini tecnici equivalenti nel catalogo
 
 const SYNONYMS: Record<string, string[]> = {
-    // ── Sanitari / WC ──────────────────────────────────────
-    // NOTE: 'wc' DEVE avere un'entry qui perché i vasi WC sono spesso
-    // nominati "VASO ESEDRA SOSPESO" senza la parola 'wc' nel nome.
-    // Senza questa entry, expand('wc') = ['wc'] e non trova i vasi.
-    // NON includere 'tazza' qui: causerebbe falsi match con "TAZZA TRASPARENTE"
-    // (tazza per riduttori di pressione) e "FRESE A TAZZA" (utensili).
-    wc:           ['vaso', 'sanitari', 'water', 'toilette'],
-    tazza:        ['wc', 'water', 'vaso', 'sanitari', 'toilette', 'gabinetto'],
-    water:        ['wc', 'tazza', 'vaso', 'sanitari', 'toilette'],
-    toilette:     ['wc', 'water', 'tazza', 'vaso', 'sanitari'],
-    gabinetto:    ['wc', 'water', 'tazza', 'vaso', 'sanitari'],
-    cesso:        ['wc', 'water', 'tazza', 'vaso', 'sanitari'],
-    latrina:      ['wc', 'water', 'gabinetto', 'vaso', 'sanitari'],
-    sanitario:    ['wc', 'water', 'tazza', 'lavabo', 'bidet', 'ceramica'],
-    ceramica:     ['sanitari', 'wc', 'lavabo', 'bidet', 'piatto'],
-    vaso:         ['wc', 'water', 'tazza', 'sanitari', 'vasi'],
-    sospesi:      ['sospeso', 'pensile', 'parete'],
 
-    // ── Cassette / Scarico ──────────────────────────────────
-    cassetta:     ['cassette', 'incasso', 'zaino', 'scarico'],
-    cassette:     ['cassetta', 'incasso', 'zaino', 'scarico'],
-    incasso:      ['cassetta', 'cassette', 'sigma', 'omega', 'duofix', 'combifix'],
-    fantasma:     ['incasso', 'cassetta', 'scomparsa', 'sigma', 'omega'],
-    scomparsa:    ['incasso', 'cassetta', 'sigma', 'omega', 'fantasma'],
-    zaino:        ['cassetta', 'cassette', 'ap116', 'ap123'],
-    scarico:      ['cassetta', 'batteria', 'meccanismo', 'sifone', 'piletta'],
-    placca:       ['placche', 'pulsante', 'geberit'],
-    galleggiante: ['rubinetto', 'valvola', 'batteria', 'cassetta'],
-    batteria:     ['galleggiante', 'valvola', 'cassetta', 'scarico'],
-    meccanismo:   ['cassetta', 'batteria', 'scarico', 'ricambi'],
+    // ════════════════════════════════════════════════════════════
+    // SANITARI IN CERAMICA
+    // ════════════════════════════════════════════════════════════
 
-    // ── Lavabi / Cucina ─────────────────────────────────────
-    lavandino:    ['lavabo', 'lavello', 'bacino', 'lavabi'],
-    lavello:      ['lavabo', 'lavandino', 'inox', 'cucina'],
-    lavabo:       ['lavandino', 'lavello', 'lavabi', 'bacino'],
-    lavabi:       ['lavabo', 'lavandino', 'complemento'],
-    bacino:       ['lavabo', 'lavandino'],
+    // ── WC / Vaso ────────────────────────────────────────────
+    // NOTE: 'wc' DEVE avere un'entry perché molti vasi si chiamano
+    // "VASO ESEDRA SOSPESO" senza la parola 'wc' nel nome.
+    // NON aggiungere 'tazza': causerebbe falsi match con "TAZZA TRASPARENTE"
+    // (ricambio riduttori pressione) e "FRESE A TAZZA" (utensili).
+    wc:              ['vaso', 'sanitari', 'water', 'toilette'],
+    tazza:           ['wc', 'water', 'vaso', 'sanitari', 'toilette'],
+    water:           ['wc', 'tazza', 'vaso', 'sanitari', 'toilette'],
+    toilette:        ['wc', 'water', 'tazza', 'vaso', 'sanitari'],
+    gabinetto:       ['wc', 'water', 'tazza', 'vaso', 'sanitari'],
+    cesso:           ['wc', 'water', 'tazza', 'vaso', 'sanitari'],
+    latrina:         ['wc', 'water', 'gabinetto', 'vaso', 'sanitari'],
+    tazzone:         ['vaso', 'wc', 'tazza', 'sanitari'],
+    // "vaso" da solo può essere vaso WC o vaso d'espansione; il TIER decide
+    vaso:            ['wc', 'water', 'tazza', 'sanitari'],
+    sanitario:       ['wc', 'water', 'tazza', 'lavabo', 'bidet', 'ceramica'],
+    ceramica:        ['sanitari', 'wc', 'lavabo', 'bidet', 'piatto'],
+    // aggettivi posizione
+    sospeso:         ['sospesi', 'pensile', 'parete', 'murale'],
+    sospesi:         ['sospeso', 'pensile', 'parete'],
+    filo:            ['filo parete', 'parete', 'sospeso'],   // "filo parete"
+    monoforo:        ['foro', 'lavabo', 'lavandino'],
 
-    // ── Bidet ───────────────────────────────────────────────
-    bidet:        ['bidet', 'sospesi', 'modulo'],
+    // ── Sedile / Copriwater ───────────────────────────────────
+    sedile:          ['sedili', 'abs', 'termoindurente', 'copriwater', 'tavoletta'],
+    sedili:          ['sedile', 'abs', 'termoindurente', 'copriwater'],
+    copriwater:      ['sedile', 'sedili', 'abs', 'termoindurente'],
+    tavoletta:       ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
+    asse:            ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
+    ciambella:       ['sedile', 'sedili', 'copriwater'],
+    coperchio:       ['sedile', 'sedili', 'copriwater'],
 
-    // ── Doccia ──────────────────────────────────────────────
-    doccia:       ['piatto', 'box', 'soffione', 'doccetta', 'colonna', 'pannello'],
-    piatto:       ['doccia', 'ceramica', 'acrilico', 'resina'],
-    box:          ['doccia', 'vasca', 'cristallo', 'vetro'],
-    soffione:     ['doccia', 'doccetta', 'abs', 'ottone'],
-    doccetta:     ['soffione', 'doccia', 'grohe', 'hansgrohe'],
-    colonna:      ['doccia', 'set', 'saliscendi', 'pannello'],
-    saliscendi:   ['doccia', 'colonna', 'set'],
+    // ── Bidet ─────────────────────────────────────────────────
+    bidet:           ['sanitari', 'sospeso', 'modulo'],
 
-    // ── Vasca ───────────────────────────────────────────────
-    vasca:        ['acrilico', 'acciaio', 'vasca da bagno', 'box'],
+    // ── Lavabo ────────────────────────────────────────────────
+    lavabo:          ['lavandino', 'lavello', 'lavabi', 'bacino', 'catinella'],
+    lavabi:          ['lavabo', 'lavandino', 'complemento', 'appoggio'],
+    lavandino:       ['lavabo', 'lavello', 'bacino', 'lavabi'],
+    catinella:       ['lavabo', 'lavandino', 'lavabi'],
+    bacino:          ['lavabo', 'lavandino'],
+    semifonte:       ['lavabo', 'lavandino', 'colonna'],   // "lavabo semifonte"
+    appoggio:        ['lavabo', 'lavabi', 'appoggio'],
 
-    // ── Rubinetteria ────────────────────────────────────────
-    rubinetto:    ['miscelatore', 'rubinetteria', 'monocomando', 'tre fori'],
-    rubinetti:    ['miscelatore', 'rubinetteria', 'monocomando'],
-    miscelatore:  ['rubinetto', 'rubinetteria', 'monocomando', 'tre fori', 'termostatico'],
-    miscelatori:  ['rubinetto', 'rubinetteria', 'monocomando', 'termostatico'],
-    monocomando:  ['miscelatore', 'rubinetto', 'rubinetteria'],
-    cartuccia:    ['cartucce', 'ricambio', 'miscelatore'],
-    cartucce:     ['cartuccia', 'ricambio', 'miscelatore'],
-    termostatico: ['termostatica', 'miscelatori', 'valvola', 'paini'],
-    termostatica: ['termostatico', 'miscelatori', 'valvola'],
-    sottolavabo:  ['rubinetto', 'rubinetti', 'valvolette'],
-    temporizzato: ['temporizzata', 'pulsante', 'rubinetteria'],
-    fotocellula:  ['sensore', 'rubinetteria', 'grohe'],
+    // ── Lavello cucina ────────────────────────────────────────
+    lavello:         ['lavabi', 'inox', 'cucina', 'acquaio', 'lavapiatti'],
+    lavelli:         ['lavello', 'inox', 'cucina'],
+    acquaio:         ['lavello', 'cucina', 'inox'],
+    lavapiatti:      ['lavello', 'cucina', 'inox'],
 
-    // ── Sifoni / Pilette / Scarichi ─────────────────────────
-    sifone:       ['sifoni', 'piletta', 'pilette', 'scarico'],
-    sifoni:       ['sifone', 'piletta', 'pilette', 'scarico'],
-    piletta:      ['pilette', 'sifone', 'scarico', 'ottone', 'pvc'],
-    pilette:      ['piletta', 'sifone', 'scarico', 'ottone', 'pvc'],
-    canalina:     ['canaline', 'sifone', 'canale'],
+    // ── Pilozzo / Lavatoio ────────────────────────────────────
+    lavatoio:        ['lavatoi', 'panni', 'pilozzi'],
+    lavatoi:         ['lavatoio', 'panni', 'pilozzi'],
+    pilozzo:         ['lavatoio', 'lavatoi', 'panni'],
+    pilozzi:         ['pilozzo', 'lavatoi', 'panni'],
 
-    // ── Riscaldamento ───────────────────────────────────────
-    caldaia:      ['caldaie', 'gas', 'ferroli', 'vaillant', 'beretta', 'baxi', 'immergas'],
-    caldaie:      ['caldaia', 'gas', 'ferroli', 'vaillant', 'beretta'],
-    scaldabagno:  ['scaldabagni', 'elettrico', 'dianboiler', 'termoboiler', 'boiler'],
-    scaldabagni:  ['scaldabagno', 'elettrico', 'dianboiler', 'termoboiler'],
-    boiler:       ['scaldabagno', 'scaldabagni', 'elettrico', 'bollitore'],
-    bollitore:    ['boiler', 'scaldabagno', 'solare', 'puffer'],
-    scaldino:     ['scaldini', 'gas', 'ferroli', 'vaillant', 'beretta', 'hermann'],
-    scaldini:     ['scaldino', 'gas', 'ferroli', 'vaillant', 'beretta'],
-    radiatore:    ['radiatori', 'alluminio', 'fondital', 'ferroli', 'acciaio'],
-    radiatori:    ['radiatore', 'alluminio', 'fondital', 'ferroli', 'acciaio'],
-    termosifone:  ['radiatore', 'radiatori', 'riscaldamento'],
-    scaldasalviette: ['scaldasalviette', 'elettrico', 'acciaio', 'radiatori'],
-    pellet:       ['stufe', 'biomassa', 'linea'],
-    stufa:        ['stufe', 'pellet', 'legna'],
-    stufe:        ['stufa', 'pellet', 'legna', 'gas', 'italkero'],
-    termocamino:  ['termocamini', 'stufa', 'caldaia', 'biomassa'],
-    valvola:      ['valvole', 'termostatica', 'sfera', 'sicurezza', 'ritegno'],
-    valvole:      ['valvola', 'termostatica', 'sfera', 'sicurezza'],
-    termostato:   ['termostati', 'cronotermostato', 'temperatura'],
-    termostati:   ['termostato', 'cronotermostato'],
-    cronotermostato: ['termostato', 'programmatore', 'orologio'],
+    // ── Piatto doccia ─────────────────────────────────────────
+    piatto:          ['doccia', 'ceramica', 'acrilico', 'resina', 'mineral'],
+    'piatto doccia': ['piatti doccia', 'ceramica', 'acrilico', 'resina'],
+    ultraflat:       ['piatto', 'doccia', 'mineral', 'basso'],
+    antiscivolo:     ['piatto', 'doccia', 'ceramica', 'acrilico'],
 
-    // ── Solare / Climatizzazione ─────────────────────────────
-    solare:       ['kit', 'pannelli', 'circolazione', 'bollitore', 'puffer'],
-    pannelli:     ['solari', 'solare', 'kit', 'ferroli'],
-    climatizzatore:  ['climatizzatori', 'condizionatore', 'ferroli', 'tcl', 'argo'],
-    climatizzatori:  ['climatizzatore', 'condizionatore', 'ferroli', 'tcl'],
-    condizionatore:  ['climatizzatore', 'climatizzatori', 'pompa', 'calore'],
-    pompa:        ['pompe', 'calore', 'circolatore', 'elettropompa'],
-    pompe:        ['pompa', 'calore', 'circolatori', 'elettropompe'],
-    circolatore:  ['circolatori', 'pompa', 'grundfos', 'ebara'],
-    circolatori:  ['circolatore', 'pompa', 'grundfos'],
+    // ── Vasca da bagno ────────────────────────────────────────
+    vasca:           ['vasche', 'acrilico', 'acciaio', 'box'],
+    vasche:          ['vasca', 'acrilico', 'acciaio'],
+    idromassaggio:   ['vasca', 'vasche', 'jacuzzi', 'whirlpool'],
+    jacuzzi:         ['vasca', 'idromassaggio', 'vasche'],
+    'vasca da bagno':['vasche', 'acrilico', 'acciaio'],
 
-    // ── Idraulica / Valvole ──────────────────────────────────
-    flessibile:   ['flessibili', 'inox', 'acciaio', 'antivibrante'],
-    flessibili:   ['flessibile', 'inox', 'acciaio', 'antivibrante', 'parigi'],
-    raccordo:     ['raccordi', 'ottone', 'rame', 'multistrato'],
-    raccordi:     ['raccordo', 'ottone', 'rame', 'multistrato'],
-    tubo:         ['tubi', 'rame', 'multistrato', 'polietilene', 'pvc'],
-    tubi:         ['tubo', 'rame', 'multistrato', 'polietilene'],
-    collettore:   ['collettori', 'valvole', 'detentori', 'tiemme', 'icma'],
-    collettori:   ['collettore', 'valvole', 'detentori'],
-    guarnizione:  ['guarnizioni', 'tenuta', 'morsetti'],
-    filtro:       ['filtri', 'addolcitore', 'autopulente'],
-    filtri:       ['filtro', 'addolcitore'],
-    addolcitore:  ['addolcitori', 'sale', 'filtro'],
-    autoclave:    ['autoclavi', 'vaso', 'membrana', 'espansione'],
-    riduttore:    ['riduttori', 'pressione', 'acqua'],
+    // ── Box doccia / Cabina ───────────────────────────────────
+    box:             ['doccia', 'cabina', 'cristallo', 'vetro', 'acrilico'],
+    cabina:          ['box', 'doccia', 'cristallo', 'vetro'],
+    vetri:           ['box', 'doccia', 'cristallo', 'vetro'],
+    parete:          ['box', 'doccia', 'vetro', 'pannello'],  // "parete doccia"
+    soffietto:       ['box', 'pvc', 'doccia'],
 
-    // ── WC - termini colloquiali non professionisti ──────────
-    copriwater:   ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
-    tavoletta:    ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
-    asse:         ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
-    ciambella:    ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
-    tazzone:      ['vaso', 'wc', 'tazza', 'sanitari'],
-    sciacquone:   ['cassetta', 'cassette', 'scarico', 'risciacquo'],
-    vaschetta:    ['cassetta', 'cassette', 'zaino', 'scarico'],
-    pulsante:     ['placca', 'placche', 'scarico', 'cassetta'],
-    bottone:      ['placca', 'placche', 'scarico', 'pulsante'],
-    tastiera:     ['placca', 'placche', 'comando', 'scarico'],
-    cannotto:     ['tubo', 'raccordo', 'cassetta', 'cacciata'],
-    cacciata:     ['cannotto', 'tubo', 'cassetta', 'scarico'],
-    gommino:      ['guarnizione', 'guarnizioni', 'tenuta', 'oring'],
-    oring:        ['guarnizione', 'guarnizioni', 'tenuta', 'gommino'],
-    anellino:     ['guarnizione', 'guarnizioni', 'oring', 'tenuta'],
-    collo:        ['sifone', 'sifoni', 'scarico'],              // "collo d'oca"
-    saltarello:   ['piletta', 'pilette', 'scarico', 'tappo'],
-    tappo:        ['piletta', 'pilette', 'scarico'],
+    // ════════════════════════════════════════════════════════════
+    // CASSETTE DI SCARICO
+    // ════════════════════════════════════════════════════════════
+    cassetta:        ['cassette', 'incasso', 'zaino', 'scarico', 'sciacquone'],
+    cassette:        ['cassetta', 'incasso', 'zaino', 'scarico'],
+    sciacquone:      ['cassetta', 'cassette', 'scarico', 'meccanismo'],
+    vaschetta:       ['cassetta', 'cassette', 'zaino', 'scarico'],
+    cisterna:        ['cassetta', 'cassette', 'scarico', 'incasso'],
+    incasso:         ['cassetta', 'sigma', 'omega', 'duofix', 'combifix'],
+    zaino:           ['cassetta', 'cassette', 'ap116', 'ap123', 'cr'],
+    fantasma:        ['incasso', 'cassetta', 'scomparsa', 'sigma', 'omega'],
+    scomparsa:       ['incasso', 'cassetta', 'sigma', 'omega', 'fantasma'],
+    scarico:         ['cassetta', 'batteria', 'meccanismo', 'sifone', 'piletta'],
+    placca:          ['placche', 'pulsante', 'comando', 'geberit', 'grohe'],
+    placche:         ['placca', 'pulsante', 'comando', 'geberit'],
+    pulsante:        ['placca', 'placche', 'scarico', 'tasto', 'bottone'],
+    bottone:         ['placca', 'placche', 'pulsante', 'tasto'],
+    tastiera:        ['placca', 'placche', 'comando', 'scarico'],
+    tasto:           ['placca', 'placche', 'pulsante', 'comando'],
+    galleggiante:    ['rubinetto', 'valvola', 'batteria', 'cassetta'],
+    batteria:        ['galleggiante', 'valvola', 'cassetta', 'catis', 'ricambio'],
+    meccanismo:      ['cassetta', 'batteria', 'scarico', 'ricambi'],
+    cannotto:        ['tubo', 'raccordo', 'cacciata', 'collegamento'],
+    cacciata:        ['cannotto', 'tubo', 'cassetta', 'scarico'],
+    canotto:         ['cannotto', 'tubo', 'wc', 'collegamento'],
 
-    // ── Lavabo / Cucina - termini colloquiali ─────────────────
-    catinella:    ['lavabo', 'lavandino', 'lavabi'],
-    acquaio:      ['lavello', 'cucina', 'inox'],
-    lavapiatti:   ['lavello', 'cucina', 'inox'],
-    lavatoio:     ['lavatoi', 'panni'],
-    pilozzo:      ['lavatoio', 'lavatoi', 'panni'],
-    fontana:      ['miscelatore', 'rubinetto', 'rubinetteria'],
+    // ════════════════════════════════════════════════════════════
+    // RUBINETTERIA
+    // ════════════════════════════════════════════════════════════
+    rubinetto:       ['rubinetteria', 'miscelatore', 'monocomando', 'tre fori', 'leva'],
+    rubinetti:       ['rubinetteria', 'miscelatore', 'monocomando'],
+    rubinetteria:    ['rubinetto', 'rubinetti', 'miscelatore', 'monocomando'],
+    miscelatore:     ['rubinetto', 'rubinetteria', 'monocomando', 'tre fori', 'termostatico'],
+    miscelatori:     ['rubinetto', 'rubinetteria', 'monocomando', 'termostatico'],
+    monocomando:     ['miscelatore', 'rubinetto', 'rubinetteria', 'leva'],
+    'tre fori':      ['rubinetteria', 'miscelatore', 'tradizionale'],
+    biforo:          ['rubinetteria', 'miscelatore', 'tre fori'],
+    monoforo:        ['rubinetto', 'rubinetteria', 'monocomando'],
+    fontana:         ['rubinetto', 'rubinetteria', 'miscelatore'],
+    rubinettino:     ['rubinetto', 'sottolavabo', 'mini'],
+    valvoletta:      ['sottolavabo', 'rubinetto', 'intercettazione'],
+    sottolavabo:     ['rubinetto', 'rubinetti', 'valvoletta', 'intercettazione'],
+    intercettatore:  ['valvola', 'rubinetto', 'sottolavabo'],
+    cartuccia:       ['cartucce', 'ricambio', 'miscelatore', 'vitone'],
+    cartucce:        ['cartuccia', 'ricambio', 'miscelatore'],
+    vitone:          ['cartuccia', 'cartucce', 'miscelatore', 'ricambio'],
+    termostatico:    ['termostatica', 'miscelatori', 'valvola', 'paini'],
+    termostatica:    ['termostatico', 'miscelatori', 'valvola'],
+    temporizzato:    ['temporizzata', 'pulsante', 'rubinetteria', 'flussometro'],
+    fotocellula:     ['sensore', 'infrarossi', 'rubinetteria', 'automatico'],
+    pedale:          ['rubinetteria', 'sanitaria', 'leva'],
+    'a pulsante':    ['temporizzato', 'rubinetteria', 'pulsante'],
+    leva:            ['rubinetteria', 'monocomando', 'miscelatore'],
+    bocchettone:     ['raccordo', 'entrata', 'flessibile', 'collegamento'],
+    eccentrici:      ['distanziatori', 'rubinetteria', 'tre fori'],
+    distanziatori:   ['eccentrici', 'rubinetteria', 'raccordi'],
+    aeratore:        ['aeratori', 'rompigetto', 'rubinetteria', 'neoperl'],
+    aeratori:        ['aeratore', 'rompigetto', 'rubinetteria', 'neoperl'],
+    rompigetto:      ['aeratore', 'aeratori', 'rubinetteria'],
+    retina:          ['aeratore', 'aeratori', 'filtro'],
+    filtrino:        ['aeratore', 'aeratori', 'filtro'],
 
-    // ── Doccia - termini colloquiali ──────────────────────────
-    doccino:      ['doccetta', 'doccette', 'doccia', 'soffione'],
-    microfono:    ['doccetta', 'doccette', 'doccia'],
-    cipolla:      ['soffione', 'soffioni', 'doccia'],
-    doccione:     ['soffione', 'soffioni', 'doccia'],
-    pigna:        ['soffione', 'soffioni', 'doccia'],
-    laccio:       ['flessibile', 'flessibili', 'doccia'],
-    cordino:      ['flessibile', 'flessibili', 'doccia'],
-    asta:         ['saliscendi', 'doccia', 'colonna'],
-    palo:         ['saliscendi', 'doccia', 'colonna', 'asta'],
-    cabina:       ['box', 'doccia', 'cristallo'],
-    vetri:        ['box', 'doccia', 'cristallo', 'vetro'],
-    base:         ['piatto', 'doccia', 'acrilico'],
+    // ════════════════════════════════════════════════════════════
+    // DOCCIA – accessori
+    // ════════════════════════════════════════════════════════════
+    doccia:          ['piatto', 'box', 'soffione', 'doccetta', 'colonna', 'pannello', 'set'],
+    soffione:        ['doccia', 'doccetta', 'abs', 'ottone', 'inox', 'cromato'],
+    soffioni:        ['soffione', 'doccia', 'doccetta'],
+    doccetta:        ['soffione', 'doccette', 'doccia', 'grohe', 'hansgrohe'],
+    doccette:        ['doccetta', 'soffione', 'doccia'],
+    doccino:         ['doccetta', 'doccette', 'doccia', 'soffione'],
+    doccione:        ['soffione', 'soffioni'],
+    cipolla:         ['soffione', 'soffioni'],
+    pigna:           ['soffione', 'soffioni'],
+    microfono:       ['doccetta', 'doccette', 'doccia'],
+    colonna:         ['set colonna', 'doccia', 'saliscendi', 'pannello'],
+    'set doccia':    ['colonna', 'saliscendi', 'soffione', 'doccetta'],
+    saliscendi:      ['doccia', 'colonna', 'asta', 'barra'],
+    asta:            ['saliscendi', 'doccia', 'colonna', 'barra'],
+    palo:            ['saliscendi', 'doccia', 'colonna', 'asta'],
+    barra:           ['saliscendi', 'asta', 'doccia'],
+    laccio:          ['flessibile', 'flessibili', 'doccia', 'tubo spirale'],
+    cordino:         ['flessibile', 'flessibili', 'doccia'],
+    'tubo doccia':   ['flessibile', 'flessibili', 'doccia', 'laccio'],
+    pannello:        ['pannelli doccia', 'colonna', 'doccia', 'inox'],
+    'pannello doccia': ['pannelli doccia', 'colonna', 'inox', 'abs'],
+    duplex:          ['doccia', 'pannello', 'colonna', 'set'],
+    braccio:         ['bracci doccia', 'soffione', 'doccia'],
+    curva:           ['doccia', 'curva doccia', 'ottone', 'inox'],
+    sgabello:        ['sgabelli doccia', 'durolite', 'doccia'],
 
-    // ── Minuteria / Tenuta - termini colloquiali ──────────────
-    rompigetto:   ['aeratore', 'aeratori', 'rubinetteria'],
-    aeratore:     ['aeratori', 'rompigetto', 'rubinetteria'],
-    aeratori:     ['aeratore', 'rompigetto', 'rubinetteria'],
-    retina:       ['aeratore', 'aeratori', 'filtro', 'filtri'],
-    filtrino:     ['aeratore', 'aeratori', 'filtro'],
-    teflon:       ['nastro', 'ptfe', 'sigillante', 'tenuta'],
-    ptfe:         ['teflon', 'nastro', 'tenuta'],
-    nastro:       ['teflon', 'ptfe', 'sigillante'],
-    canapa:       ['stoppa', 'sigillante', 'tenuta', 'lino'],
-    stoppa:       ['canapa', 'sigillante', 'tenuta'],
-    vitone:       ['cartuccia', 'cartucce', 'miscelatore', 'ricambio'],
-    multistrato:  ['tubi', 'tubo', 'raccordo', 'raccordi', 'pex'],
+    // ════════════════════════════════════════════════════════════
+    // SIFONI / PILETTE / SCARICHI
+    // ════════════════════════════════════════════════════════════
+    sifone:          ['sifoni', 'piletta', 'pilette', 'scarico', 'geberit'],
+    sifoni:          ['sifone', 'piletta', 'pilette', 'scarico'],
+    piletta:         ['pilette', 'sifone', 'scarico', 'ottone', 'pvc'],
+    pilette:         ['piletta', 'sifone', 'scarico', 'ottone', 'pvc'],
+    saltarello:      ['piletta', 'pilette', 'scarico', 'tappo'],
+    tappo:           ['pilette', 'piletta', 'scarico', 'copriforo'],
+    copriforo:       ['tappo', 'piletta', 'lavello'],
+    canalina:        ['canaline', 'sifone', 'scarico', 'geberit'],
+    canaline:        ['canalina', 'sifone', 'scarico'],
+    troppopieno:     ['sifone', 'piletta', 'scarico', 'scarico vasca'],
+    collo:           ['sifone', 'sifoni', 'scarico'],        // "collo d'oca"
+    stura:           ['molle', 'sturalavandino', 'scarico'],
+    sturalavandino:  ['molle', 'stura', 'scarico'],
+    'collo doca':    ['sifone', 'sifoni', 'scarico'],
 
-    // ── Riscaldamento - termini colloquiali ───────────────────
-    calorifero:   ['radiatore', 'radiatori', 'alluminio', 'termosifone'],
-    elemento:     ['radiatore', 'radiatori', 'alluminio', 'fondital'],
-    scaldacqua:   ['scaldabagno', 'scaldabagni', 'boiler', 'elettrico'],
-    split:        ['climatizzatore', 'climatizzatori', 'condizionatore'],
-    detentore:    ['detentori', 'valvola', 'valvole', 'radiatore'],
-    manopola:     ['valvola', 'termostatica', 'detentore', 'radiatore'],
-    centralina:   ['cronotermostato', 'termostato', 'programmatore'],
-    candeletta:   ['elettrodo', 'caldaia', 'accensione', 'ricambi'],
-    elettrodo:    ['candeletta', 'caldaia', 'accensione', 'ricambi'],
-    ventola:      ['unita esterna', 'condizionatore', 'climatizzatore'],
-    rotella:      ['valvola', 'termostatica', 'detentore', 'radiatore'],
+    // ════════════════════════════════════════════════════════════
+    // FLESSIBILI
+    // ════════════════════════════════════════════════════════════
+    flessibile:      ['flessibili', 'inox', 'acciaio', 'antivibrante', 'treccia'],
+    flessibili:      ['flessibile', 'inox', 'acciaio', 'antivibrante', 'parigi'],
+    treccia:         ['flessibile', 'flessibili', 'inox', 'trecciato'],
+    tubo:            ['tubi', 'rame', 'multistrato', 'polietilene', 'pvc', 'pex'],
+    tubi:            ['tubo', 'rame', 'multistrato', 'polietilene'],
+    tubetto:         ['tubo', 'cromato', 'rame', 'ottone'],
+    tubetti:         ['tubetto', 'tubo', 'cromato', 'rame'],
+    raccordo:        ['raccordi', 'ottone', 'rame', 'multistrato', 'bronzo'],
+    raccordi:        ['raccordo', 'ottone', 'rame', 'multistrato'],
+    giunto:          ['raccordo', 'raccordi', 'giunti', 'dielettrico'],
+    giunti:          ['giunto', 'raccordi', 'dielettrico'],
+    niple:           ['raccordo', 'niples', 'manicotto', 'prolunga'],
+    niples:          ['niple', 'raccordo', 'manicotto'],
+    manicotto:       ['raccordo', 'raccordi', 'giunzione', 'niple'],
+    gomito:          ['raccordo', 'curva', 'angolo', '90'],
+    curva:           ['gomito', 'raccordo', 'angolo', 'curva'],
+    braga:           ['raccordo', 'te', 'derivazione', 'pvc'],
+    tee:             ['raccordo', 'derivazione', 'te', 'giunzione'],
+    derivazione:     ['tee', 'te', 'raccordo', 'braga'],
+    riduzione:       ['raccordo', 'riduzione', 'riduttore di diametro'],
+    flangia:         ['flange', 'raccordo', 'saldare'],
+    flange:          ['flangia', 'raccordi', 'saldare'],
+    multistrato:     ['tubo', 'tubi', 'raccordo', 'pex', 'ape', 'tiemme', 'unidelta'],
+    pex:             ['multistrato', 'cobra', 'tubo', 'polietilene'],
+    polietilene:     ['pex', 'tubo', 'multistrato', 'tubi'],
+    rame:            ['tubo', 'tubi', 'raccordi', 'saldare'],
 
-    // ── Accessori Bagno ───────────────────────────────────────
-    sedile:       ['sedili', 'abs', 'termoindurente', 'copriwater'],
-    sedili:       ['sedile', 'abs', 'termoindurente', 'copriwater'],
-    accessori:    ['accessori', 'bagno', 'ottone'],
-    specchio:     ['specchi', 'abs', 'filo', 'applique'],
-    mobile:       ['mobili', 'bagno', 'classici', 'moderni'],
-    mobilebagno:  ['mobili', 'bagno', 'arredo'],
+    // ════════════════════════════════════════════════════════════
+    // VALVOLE
+    // ════════════════════════════════════════════════════════════
+    valvola:         ['valvole', 'sfera', 'sicurezza', 'ritegno', 'termostatica'],
+    valvole:         ['valvola', 'sfera', 'sicurezza', 'ritegno'],
+    'valvola a sfera': ['valvole a sfera', 'intercettazione', 'sfera'],
+    intercettazione: ['valvola', 'sfera', 'rubinetto', 'sottolavabo'],
+    detentore:       ['detentori', 'valvola', 'valvole', 'radiatore'],
+    detentori:       ['detentore', 'valvola', 'valvole'],
+    manopola:        ['valvola', 'termostatica', 'detentore', 'radiatore'],
+    rotella:         ['valvola', 'termostatica', 'detentore', 'radiatore'],
+    termoscopico:    ['valvola', 'termostatica', 'testa', 'radiatore'],
+    'valvola di sicurezza': ['sicurezza', 'scaldabagno', 'caldaia'],
+    sicurezza:       ['valvola', 'valvole', 'scaldabagno', 'caldaia'],
+    ritegno:         ['valvola', 'ritegno', 'non ritorno'],
+    sfogo:           ['valvola', 'sfogo aria', 'radiatori'],
+    sfiato:          ['sfogo', 'valvola', 'aria', 'radiatori'],
+    pressostato:     ['pressostati', 'pressione', 'pompa'],
 
-    // ── Utensileria / Attrezzi ────────────────────────────────
-    // Pinze (il catalogo usa "Pinza" al singolare: "Pinza universale", ecc.)
-    pinza:        ['pinze', 'pinzette', 'tronchese'],
-    pinze:        ['pinza', 'pinzette', 'tronchese'],
-    pinzette:     ['pinza', 'pinze', 'tronchese', 'morse'],
-    morse:        ['pinza', 'pinze', 'tronchese', 'morsa'],
-    morsa:        ['morse', 'morsetto', 'morsa'],
-    tronchese:    ['tronchesi', 'pinza', 'tagliaferro', 'taglio'],
-    tronchesi:    ['tronchese', 'pinza', 'taglio'],
-    forbici:      ['forbice', 'cesoie', 'tronchese'],
-    forbice:      ['forbici', 'cesoie'],
-    cesoie:       ['forbici', 'tronchese'],
-    chiave:       ['chiavi', 'brugola', 'esagonale', 'imbus'],
-    chiavi:       ['chiave', 'brugola', 'esagonale'],
-    brugola:      ['chiave', 'esagonale', 'imbus', 'chiavi'],
-    esagonale:    ['brugola', 'chiave', 'esagono', 'imbus'],
-    cacciavite:   ['cacciaviti', 'giravite', 'Phillips'],
-    cacciaviti:   ['cacciavite', 'giravite'],
-    giravite:     ['cacciavite', 'cacciaviti'],
-    martello:     ['mazza', 'maglio'],
-    mazza:        ['martello', 'maglio'],
-    sbavatore:    ['sbavatori', 'calibratore', 'sbavatura'],
-    sbavatori:    ['sbavatore', 'calibratore'],
-    tagliatubi:   ['taglio', 'tubi', 'cutter', 'taglierino'],
-    saldatura:    ['saldare', 'stagno', 'brasatura', 'disossidante'],
-    saldare:      ['saldatura', 'stagno', 'brasatura'],
-    stagno:       ['saldatura', 'saldare', 'lega', 'piombo'],
-    fresa:        ['frese', 'tazza', 'punte'],
-    frese:        ['fresa', 'punta', 'punte'],
-    silicone:     ['sigillante', 'sigillanti', 'soudal', 'henkel'],
-    sigillante:   ['silicone', 'sigillanti', 'canapa', 'teflon'],
-    sigillanti:   ['sigillante', 'silicone', 'soudal'],
+    // ════════════════════════════════════════════════════════════
+    // COLLETTORI / IMPIANTI A PANNELLI
+    // ════════════════════════════════════════════════════════════
+    collettore:      ['collettori', 'valvole', 'detentori', 'tiemme', 'icma', 'manifold'],
+    collettori:      ['collettore', 'valvole', 'detentori'],
+    manifold:        ['collettore', 'collettori', 'riscaldamento'],
+    zona:            ['valvola', 'zona', 'motorizzata', 'collettore'],
 
-    // ── Fumisteria / Gas ─────────────────────────────────────
-    canna:        ['fumaria', 'fumisteria', 'tubo', 'inox'],
-    griglia:      ['griglie', 'aerazione', 'ventilazione'],
-    sospeso:      ['sospesi', 'pensile', 'parete'],
+    // ════════════════════════════════════════════════════════════
+    // RISCALDAMENTO – CALDAIE
+    // ════════════════════════════════════════════════════════════
+    caldaia:         ['caldaie', 'gas', 'ferroli', 'vaillant', 'beretta', 'baxi', 'immergas', 'murale'],
+    caldaie:         ['caldaia', 'gas', 'ferroli', 'vaillant', 'beretta'],
+    murale:          ['caldaia', 'caldaie', 'a parete', 'sospeso'],
+    combinata:       ['caldaia', 'caldaie', 'acqua calda', 'riscaldamento'],
+    condensazione:   ['caldaia', 'caldaie', 'gas', 'efficienza'],
+    biomassa:        ['stufa', 'stufe', 'pellet', 'legna', 'caldaia'],
+    candeletta:      ['elettrodo', 'caldaia', 'accensione', 'ricambi'],
+    elettrodo:       ['candeletta', 'caldaia', 'accensione', 'ricambi'],
+    pressostato:     ['pressostati', 'pressione', 'caldaia', 'pompa'],
 
-    // ── Misure / Attributi ───────────────────────────────────
-    '24kw':  ['24', 'kw', 'kilowatt'],
-    '18kw':  ['18', 'kw'],
-    '28kw':  ['28', 'kw'],
-    grande:  ['xxl', 'grande', 'maxi'],
-    piccolo: ['mini', 'compact', 'ridotto'],
-    incassato: ['incasso', 'a incasso'],
-    parete:    ['sospeso', 'murale', 'a parete'],
-    terra:     ['a terra', 'tradizionale', 'classico'],
+    // ── Scaldabagni ───────────────────────────────────────────
+    scaldabagno:     ['scaldabagni', 'elettrico', 'boiler', 'termoboiler', 'dianboiler'],
+    scaldabagni:     ['scaldabagno', 'elettrico', 'boiler', 'termoboiler'],
+    boiler:          ['scaldabagno', 'scaldabagni', 'elettrico', 'bollitore'],
+    scaldacqua:      ['scaldabagno', 'scaldabagni', 'boiler', 'elettrico'],
+    bollitore:       ['boiler', 'scaldabagno', 'solare', 'puffer', 'novasolar'],
+    puffer:          ['bollitore', 'solare', 'accumulo'],
+
+    // ── Scaldini a gas ────────────────────────────────────────
+    scaldino:        ['scaldini', 'gas', 'ferroli', 'vaillant', 'beretta', 'hermann', 'baxi'],
+    scaldini:        ['scaldino', 'gas', 'ferroli', 'vaillant', 'beretta'],
+    'scaldino a gas':['scaldini', 'gas', 'beretta', 'vaillant'],
+
+    // ── Radiatori ─────────────────────────────────────────────
+    radiatore:       ['radiatori', 'alluminio', 'fondital', 'ferroli', 'acciaio', 'tubolare'],
+    radiatori:       ['radiatore', 'alluminio', 'fondital', 'ferroli', 'acciaio'],
+    termosifone:     ['radiatore', 'radiatori', 'riscaldamento', 'acciaio'],
+    calorifero:      ['radiatore', 'radiatori', 'alluminio', 'termosifone'],
+    elemento:        ['radiatore', 'radiatori', 'alluminio', 'fondital'],
+    elementi:        ['radiatore', 'radiatori', 'alluminio'],
+    tubolare:        ['radiatori tubolari', 'radiatore', 'acciaio'],
+    'radiatore a gas': ['radiatori a gas', 'fondital', 'italkero'],
+    scaldasalviette: ['scaldasalviette', 'termoarredo', 'elettrico', 'acciaio'],
+    termoarredo:     ['scaldasalviette', 'radiatori', 'acciaio', 'portasciugamani'],
+    portasciugamani: ['scaldasalviette', 'termoarredo', 'elettrico'],
+    asciugamani:     ['scaldasalviette', 'termoarredo', 'elettrico', 'portasciugamani'],
+
+    // ── Stufe / Camini ────────────────────────────────────────
+    stufa:           ['stufe', 'pellet', 'legna', 'gas', 'italkero'],
+    stufe:           ['stufa', 'pellet', 'legna', 'gas'],
+    pellet:          ['stufe a pellet', 'biomassa', 'linea'],
+    camino:          ['termocamino', 'stufa', 'legna', 'fumisteria'],
+    termocamino:     ['termocamini', 'stufa', 'caldaia', 'biomassa'],
+    caminetto:       ['camino', 'termocamino', 'stufa', 'legna'],
+    infrarossi:      ['stufa', 'pannello', 'riscaldamento', 'elettrico'],
+
+    // ── Termoregolazione ──────────────────────────────────────
+    termostato:      ['termostati', 'cronotermostato', 'temperatura', 'programmatore', 'centralina'],
+    termostati:      ['termostato', 'cronotermostato', 'programmatore'],
+    cronotermostato: ['termostato', 'programmatore', 'orologio', 'centralina'],
+    programmatore:   ['cronotermostato', 'termostato', 'orologio', 'timer'],
+    centralina:      ['cronotermostato', 'termostato', 'programmatore'],
+    timer:           ['programmatore', 'cronotermostato', 'orologio'],
+
+    // ── Ventilconvettori ──────────────────────────────────────
+    ventilconvettore:['ventilconvettori', 'fancoil', 'climatizzazione'],
+    fancoil:         ['ventilconvettore', 'ventilconvettori', 'climatizzazione'],
+
+    // ════════════════════════════════════════════════════════════
+    // CLIMATIZZAZIONE
+    // ════════════════════════════════════════════════════════════
+    climatizzatore:  ['climatizzatori', 'condizionatore', 'split', 'ferroli', 'tcl', 'argo', 'daitsu'],
+    climatizzatori:  ['climatizzatore', 'condizionatore', 'split', 'ferroli', 'tcl'],
+    condizionatore:  ['climatizzatore', 'climatizzatori', 'split', 'pompa di calore'],
+    'aria condizionata': ['climatizzatore', 'climatizzatori', 'split', 'condizionatore'],
+    split:           ['climatizzatore', 'climatizzatori', 'condizionatore'],
+    monosplit:       ['climatizzatore', 'split', 'condizionatore'],
+    multisplit:      ['climatizzatore', 'split', 'condizionatore'],
+    pompa:           ['pompe', 'calore', 'circolatore', 'elettropompa', 'grundfos', 'ebara'],
+    pompe:           ['pompa', 'calore', 'circolatori', 'elettropompe'],
+    'pompa di calore': ['climatizzatore', 'condizionatore', 'inverter'],
+    circolatore:     ['circolatori', 'pompa', 'grundfos', 'ebara', 'wilo'],
+    circolatori:     ['circolatore', 'pompa', 'grundfos', 'ebara'],
+    elettropompa:    ['pompa', 'pompe', 'grundfos', 'ebara', 'ideal star'],
+    elettropompe:    ['elettropompa', 'pompa', 'grundfos'],
+    ventola:         ['unita esterna', 'condizionatore', 'climatizzatore'],
+    'unita esterna': ['climatizzatore', 'split', 'condizionatore'],
+    deumidificatore: ['daitsu', 'clima', 'umidita'],
+    gas:             ['gas', 'r32', 'r410', 'refrigerante', 'bombola'],
+
+    // ════════════════════════════════════════════════════════════
+    // IMPIANTO SOLARE
+    // ════════════════════════════════════════════════════════════
+    solare:          ['pannelli solari', 'kit solare', 'circolazione', 'bollitore', 'puffer', 'far'],
+    pannello:        ['pannelli solari', 'solare', 'kit', 'ferroli'],
+    pannelli:        ['pannello', 'solari', 'solare', 'kit', 'ferroli'],
+    'kit solare':    ['solare', 'pannelli', 'circolazione', 'bollitore'],
+    termico:         ['solare', 'pannelli', 'collettore'],
+
+    // ════════════════════════════════════════════════════════════
+    // TENUTA / SIGILLANTI / MINUTERIA
+    // ════════════════════════════════════════════════════════════
+    guarnizione:     ['guarnizioni', 'tenuta', 'morsetti', 'oring', 'gommino'],
+    guarnizioni:     ['guarnizione', 'tenuta', 'morsetti'],
+    gommino:         ['guarnizione', 'guarnizioni', 'tenuta', 'oring'],
+    oring:           ['guarnizione', 'guarnizioni', 'tenuta', 'gommino', 'anello'],
+    anellino:        ['guarnizione', 'guarnizioni', 'oring', 'tenuta'],
+    morsetto:        ['guarnizione', 'fascetta', 'collare', 'tenuta'],
+    fascetta:        ['morsetto', 'collare', 'stringitubi'],
+    collare:         ['fascetta', 'morsetto', 'riparazione'],
+    teflon:          ['ptfe', 'nastro', 'sigillante', 'tenuta', 'canapa'],
+    ptfe:            ['teflon', 'nastro', 'tenuta'],
+    nastro:          ['teflon', 'ptfe', 'sigillante', 'isolante'],
+    canapa:          ['stoppa', 'sigillante', 'tenuta', 'lino', 'teflon'],
+    stoppa:          ['canapa', 'sigillante', 'tenuta'],
+    silicone:        ['sigillante', 'sigillanti', 'soudal', 'henkel', 'biffi'],
+    sigillante:      ['silicone', 'sigillanti', 'canapa', 'teflon', 'soudal'],
+    sigillanti:      ['sigillante', 'silicone', 'soudal', 'henkel'],
+    antigelo:        ['antigelo', 'glicole', 'anticongelante', 'liquido'],
+    anticongelante:  ['antigelo', 'glicole', 'liquido'],
+    cemento:         ['cemento', 'colla', 'pvc', 'giunzione'],
+
+    // ════════════════════════════════════════════════════════════
+    // FILTRI / ADDOLCITORI / VASI ESPANSIONE
+    // ════════════════════════════════════════════════════════════
+    filtro:          ['filtri', 'addolcitore', 'autopulente', 'contenitore'],
+    filtri:          ['filtro', 'addolcitore', 'autopulente'],
+    addolcitore:     ['addolcitori', 'sale', 'filtro', 'resina'],
+    addolcitori:     ['addolcitore', 'sale', 'filtro'],
+    'vaso espansione': ['vasi espansione', 'autoclave', 'membrana'],
+    autoclave:       ['autoclavi', 'vaso', 'membrana', 'espansione', 'pressione'],
+    autoclavi:       ['autoclave', 'vaso', 'membrana'],
+    membrana:        ['vaso', 'autoclave', 'espansione', 'diaframma'],
+    riduttore:       ['riduttori', 'pressione', 'acqua', 'honeywell', 'far'],
+    riduttori:       ['riduttore', 'pressione', 'acqua'],
+    'riduttore di pressione': ['riduttori', 'pressione', 'acqua', 'honeywell'],
+    manometro:       ['manometri', 'pressione', 'misura'],
+    manometri:       ['manometro', 'pressione'],
+
+    // ════════════════════════════════════════════════════════════
+    // FUMISTERIA / SCARICO FUMI
+    // ════════════════════════════════════════════════════════════
+    canna:           ['fumaria', 'fumisteria', 'tubo', 'inox', 'alluminio'],
+    fumaria:         ['canna', 'fumisteria', 'tubo', 'scarico fumi'],
+    fumisteria:      ['canna fumaria', 'scarico fumi', 'tubi', 'inox'],
+    'canna fumaria': ['fumisteria', 'tubo', 'inox', 'monoparete', 'doppia parete'],
+    coassiale:       ['tubi coassiali', 'caldaia', 'scarico fumi'],
+    monoparete:      ['canna fumaria', 'fumisteria', 'tubo inox'],
+    'doppia parete': ['canna fumaria', 'fumisteria', 'inox'],
+    terminale:       ['terminali', 'caldaia', 'scarico fumi', 'coassiale'],
+    esalatore:       ['copricaldaia', 'caldaia', 'scarico fumi'],
+
+    // ════════════════════════════════════════════════════════════
+    // MOBILE BAGNO / ARREDO
+    // ════════════════════════════════════════════════════════════
+    mobile:          ['mobili', 'bagno', 'classici', 'moderni', 'sottolavello'],
+    mobiletto:       ['mobile', 'mobili', 'bagno', 'arredo'],
+    mobili:          ['mobile', 'bagno', 'classici', 'moderni'],
+    armadietto:      ['mobile', 'arredo bagno', 'specchio', 'contenitore'],
+    specchio:        ['specchi', 'abs', 'filo', 'applique', 'arredo'],
+    specchiera:      ['specchio', 'specchi', 'mobile', 'bagno'],
+    applique:        ['specchio', 'illuminazione', 'bagno'],
+    pensile:         ['mobile', 'sospeso', 'bagno', 'arredo'],
+    colonna:         ['mobile', 'bagno', 'pensile', 'arredo'],   // mobile colonna
+    'porta biancheria': ['porta biancheria', 'cestino', 'bagno'],
+    'porta scopino': ['porta scopino', 'scopino', 'bagno'],
+
+    // ── Accessori bagno ───────────────────────────────────────
+    sedile:          ['sedili', 'abs', 'termoindurente', 'copriwater', 'tavoletta'],
+    accessori:       ['accessori bagno', 'ottone', 'gedy', 'saniplast'],
+    portasapone:     ['sapone', 'accessori', 'bagno', 'gedy'],
+    portarotolo:     ['carta', 'accessori', 'bagno', 'gedy'],
+    portasalviette:  ['salviette', 'accessori', 'bagno'],
+    gancio:          ['appendino', 'accessori', 'bagno'],
+    appendino:       ['gancio', 'accessori', 'bagno'],
+    porta:           ['portasciugamani', 'portasalviette', 'bagno', 'accessori'],
+    scopino:         ['porta scopino', 'wc', 'bagno', 'accessori'],
+    piantana:        ['portarotolo', 'scopino', 'bagno', 'colonna'],
+
+    // ════════════════════════════════════════════════════════════
+    // UTENSILERIA / ATTREZZI
+    // ════════════════════════════════════════════════════════════
+
+    // ── Pinze / Morse ─────────────────────────────────────────
+    pinza:           ['pinze', 'pinzette', 'tronchese', 'morse'],
+    pinze:           ['pinza', 'pinzette', 'tronchese'],
+    pinzette:        ['pinza', 'pinze', 'tronchese', 'morse'],
+    morse:           ['pinza', 'pinze', 'tronchese', 'morsa'],
+    morsa:           ['morse', 'morsetto'],
+    tronchese:       ['tronchesi', 'pinza', 'taglio diagonale'],
+    tronchesi:       ['tronchese', 'pinza', 'taglio'],
+    forbici:         ['forbice', 'cesoie', 'tronchese'],
+    forbice:         ['forbici', 'cesoie'],
+    cesoie:          ['forbici', 'tronchese', 'taglio'],
+
+    // ── Chiavi ────────────────────────────────────────────────
+    chiave:          ['chiavi', 'brugola', 'esagonale', 'dinamometrica', 'radiatore'],
+    chiavi:          ['chiave', 'brugola', 'esagonale'],
+    brugola:         ['chiave', 'esagonale', 'imbus', 'chiavi', 'allen'],
+    imbus:           ['brugola', 'esagonale', 'allen', 'chiave'],
+    allen:           ['brugola', 'imbus', 'esagonale'],
+    esagonale:       ['brugola', 'chiave', 'imbus', 'allen'],
+    dinamometrica:   ['chiave', 'chiavi', 'coppia'],
+
+    // ── Cacciaviti ────────────────────────────────────────────
+    cacciavite:      ['cacciaviti', 'giravite', 'phillips', 'taglio'],
+    cacciaviti:      ['cacciavite', 'giravite'],
+    giravite:        ['cacciavite', 'cacciaviti'],
+
+    // ── Martelli / Mazze ──────────────────────────────────────
+    martello:        ['mazza', 'maglio'],
+    mazza:           ['martello', 'maglio'],
+
+    // ── Sbavatori / Calibratori ───────────────────────────────
+    sbavatore:       ['sbavatori', 'calibratore', 'calibratori'],
+    sbavatori:       ['sbavatore', 'calibratore'],
+    calibratore:     ['sbavatore', 'sbavatori', 'calibratori'],
+
+    // ── Tagliatubi / Seghetti ─────────────────────────────────
+    tagliatubi:      ['taglio', 'tubi', 'cutter'],
+    seghetto:        ['sega', 'taglio', 'metallo'],
+    sega:            ['seghetto', 'taglio'],
+    cutter:          ['taglierino', 'taglio', 'lama'],
+
+    // ── Saldatura ─────────────────────────────────────────────
+    saldatura:       ['saldare', 'stagno', 'brasatura', 'disossidante', 'cannello'],
+    saldare:         ['saldatura', 'stagno', 'brasatura'],
+    brasatura:       ['saldatura', 'saldare', 'cannello'],
+    stagno:          ['saldatura', 'saldare', 'lega', 'piombo'],
+    disossidante:    ['stagno', 'saldatura', 'flussante'],
+    cannello:        ['cannelli', 'saldatura', 'brasatura'],
+    cannelli:        ['cannello', 'saldatura', 'brasatura'],
+
+    // ── Frese ─────────────────────────────────────────────────
+    fresa:           ['frese', 'hss', 'punte', 'utensileria'],
+    frese:           ['fresa', 'hss', 'punta', 'utensileria'],
+
+    // ── Curvatubi ─────────────────────────────────────────────
+    curvatubi:       ['curva tubi', 'rame', 'condizionamento', 'piegatura'],
+    piegatubi:       ['curvatubi', 'piegatura', 'rame'],
+
+    // ════════════════════════════════════════════════════════════
+    // GAS / CONTATORI / REGOLATORI
+    // ════════════════════════════════════════════════════════════
+    contatore:       ['contatori', 'acqua', 'gas', 'sportello'],
+    contatori:       ['contatore', 'acqua', 'gas'],
+    sportello:       ['cassetto', 'contatore', 'gas', 'acqua'],
+    regolatore:      ['regolatori gas', 'bombola', 'cavagna', 'novacomet'],
+    regolatori:      ['regolatore', 'gas', 'bombola', 'pressione'],
+    bombola:         ['gas', 'regolatore', 'rubinetto'],
+    elettrovalvola:  ['elettrovalvole', 'gas', 'acqua', 'valvola'],
+    elettrovalvole:  ['elettrovalvola', 'gas', 'acqua'],
+    manichetta:      ['manichette', 'gas', 'flessibile', 'cucine'],
+    manichette:      ['manichetta', 'gas', 'cucine'],
+
+    // ════════════════════════════════════════════════════════════
+    // PRODOTTI CHIMICI / TRATTAMENTO ACQUA
+    // ════════════════════════════════════════════════════════════
+    anticalcare:     ['disincrostante', 'trattamento', 'acqua', 'magnetico'],
+    disincrostante:  ['anticalcare', 'acido', 'pulizia', 'impianto'],
+    descaler:        ['anticalcare', 'disincrostante', 'caldaia'],
+    liquido:         ['antigelo', 'glicole', 'trattamento', 'impianto'],
+    glicole:         ['antigelo', 'liquido', 'trattamento'],
+    'prodotti chimici': ['biffi', 'camon', 'faren', 'soudal'],
+    neutralizzatore: ['condensa', 'caldaia', 'acido'],
+
+    // ════════════════════════════════════════════════════════════
+    // SCARICHI PVC / RACCOLTA
+    // ════════════════════════════════════════════════════════════
+    pozzetto:        ['pozzetti', 'chiusino', 'scarico', 'raccolta'],
+    pozzetti:        ['pozzetto', 'chiusini', 'scarico'],
+    chiusino:        ['pozzetto', 'pozzetti', 'coperchio'],
+    griglia:         ['griglie', 'aerazione', 'piletta', 'scarico'],
+    griglie:         ['griglia', 'aerazione', 'scarico', 'piletta'],
+    canale:          ['canaline', 'griglia', 'scarico'],
+
+    // ════════════════════════════════════════════════════════════
+    // ISOLAMENTO / TUBI
+    // ════════════════════════════════════════════════════════════
+    isolante:        ['tubo', 'nastro', 'isolamento', 'espanso'],
+    fonoisolante:    ['tubi', 'ppc', 'sitech', 'scarico', 'silenzioso'],
+    'tubo gas':      ['manichetta', 'gas', 'guaina', 'tubazione'],
+
+    // ════════════════════════════════════════════════════════════
+    // MISURE / ATTRIBUTI GENERALI
+    // ════════════════════════════════════════════════════════════
+    '24kw':          ['24', 'kw', 'kilowatt'],
+    '18kw':          ['18', 'kw'],
+    '28kw':          ['28', 'kw'],
+    '32kw':          ['32', 'kw'],
+    grande:          ['xxl', 'grande', 'maxi'],
+    piccolo:         ['mini', 'compact', 'ridotto'],
+    incassato:       ['incasso', 'a incasso'],
+    terra:           ['a terra', 'tradizionale', 'classico', 'colonna'],
+    parete:          ['sospeso', 'murale', 'a parete', 'parete'],
+    inox:            ['acciaio inox', 'acciaio', 'inossidabile'],
+    cromato:         ['cromo', 'cromata', 'cromati'],
+    bianco:          ['bianca', 'bianchi', 'bianche'],
+    nero:            ['nera', 'neri', 'nere', 'nero matt', 'opaco'],
+    opaco:           ['nero', 'bianco', 'satinato', 'matt'],
 };
 
 // ─────────────────────────────────────────────

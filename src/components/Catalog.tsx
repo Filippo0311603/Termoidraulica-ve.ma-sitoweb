@@ -99,13 +99,14 @@ const Catalog = ({
 
     // ========== SMART SEARCH ENGINE (v2) ==========
     const filteredProducts = useMemo(() => {
-        let results = activeCat === "Tutti"
+        // When a search query is active, search across ALL products
+        // (ignore the active category – the engine handles ranking by relevance)
+        if (searchQuery.trim()) {
+            return smartSearch(products, searchQuery);
+        }
+        return activeCat === "Tutti"
             ? products
             : products.filter(p => p.category === activeCat);
-        if (searchQuery.trim()) {
-            results = smartSearch(results, searchQuery);
-        }
-        return results;
     }, [products, activeCat, searchQuery]);
 
     const visibleProducts = filteredProducts.slice(0, visibleCount);
