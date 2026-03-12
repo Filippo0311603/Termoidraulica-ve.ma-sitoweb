@@ -187,14 +187,13 @@ const SYNONYMS: Record<string, string[]> = {
     cordino:         ['flessibile', 'flessibili', 'doccia'],
     'tubo doccia':   ['flessibile', 'flessibili', 'doccia', 'laccio'],
     'pannello doccia': ['pannelli doccia', 'colonna', 'inox', 'abs'],
-    duplex:          ['pannelli doccia', 'colonna doccia', 'set doccia'],
+    duplex:          ['prese acqua', 'presa acqua', 'pannelli doccia', 'colonna doccia', 'set doccia'],
     braccio:         ['bracci doccia', 'soffione'],
     sgabello:        ['sgabelli doccia', 'durolite'],
     'presa acqua':   ['prese acqua', 'duplex', 'rubinetto'],
     'ruba acqua':    ['prese acqua', 'presa acqua', 'duplex'],
     rubaacqua:       ['prese acqua', 'presa acqua', 'duplex'],
     presa:           ['prese acqua', 'presa acqua', 'duplex'],
-    duplex:          ['prese acqua', 'presa acqua', 'pannelli doccia'],
 
     // ════════════════════════════════════════════════════════════
     // SIFONI / PILETTE / SCARICHI
@@ -681,7 +680,7 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     presa:       ['prese acqua'],
     'presa acqua': ['prese acqua'],
     'ruba acqua':  ['prese acqua'],
-    duplex:      ['prese acqua'],
+    duplex:      ['prese acqua', 'pannelli doccia'],
 
     // ── Cassette ─────────────────────────────────────────────
     cassetta:    ['cassette incasso', 'cassette a zaino'],
