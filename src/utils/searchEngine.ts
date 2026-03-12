@@ -25,14 +25,21 @@ import type { Product } from '../types';
 
 const SYNONYMS: Record<string, string[]> = {
     // ── Sanitari / WC ──────────────────────────────────────
+    // NOTE: 'wc' DEVE avere un'entry qui perché i vasi WC sono spesso
+    // nominati "VASO ESEDRA SOSPESO" senza la parola 'wc' nel nome.
+    // Senza questa entry, expand('wc') = ['wc'] e non trova i vasi.
+    // NON includere 'tazza' qui: causerebbe falsi match con "TAZZA TRASPARENTE"
+    // (tazza per riduttori di pressione) e "FRESE A TAZZA" (utensili).
+    wc:           ['vaso', 'sanitari', 'water', 'toilette'],
     tazza:        ['wc', 'water', 'vaso', 'sanitari', 'toilette', 'gabinetto'],
     water:        ['wc', 'tazza', 'vaso', 'sanitari', 'toilette'],
     toilette:     ['wc', 'water', 'tazza', 'vaso', 'sanitari'],
-    gabinetto:    ['wc', 'water', 'tazza', 'sanitari'],
-    cesso:        ['wc', 'water', 'tazza', 'sanitari'],
+    gabinetto:    ['wc', 'water', 'tazza', 'vaso', 'sanitari'],
+    cesso:        ['wc', 'water', 'tazza', 'vaso', 'sanitari'],
+    latrina:      ['wc', 'water', 'gabinetto', 'vaso', 'sanitari'],
     sanitario:    ['wc', 'water', 'tazza', 'lavabo', 'bidet', 'ceramica'],
     ceramica:     ['sanitari', 'wc', 'lavabo', 'bidet', 'piatto'],
-    vaso:         ['wc', 'water', 'tazza', 'sanitari', 'vasi', 'espansione', 'autoclave'],
+    vaso:         ['wc', 'water', 'tazza', 'sanitari', 'vasi'],
     sospesi:      ['sospeso', 'pensile', 'parete'],
 
     // ── Cassette / Scarico ──────────────────────────────────
@@ -142,8 +149,6 @@ const SYNONYMS: Record<string, string[]> = {
     riduttore:    ['riduttori', 'pressione', 'acqua'],
 
     // ── WC - termini colloquiali non professionisti ──────────
-    // NOTA: NON includere 'wc' come sinonimo qui perché è substring
-    // del nome dei vasi ("VASO WC SOSPESO") e causerebbe falsi match.
     copriwater:   ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
     tavoletta:    ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
     asse:         ['sedile', 'sedili', 'abs', 'termoindurente', 'copriwater'],
@@ -219,6 +224,39 @@ const SYNONYMS: Record<string, string[]> = {
     specchio:     ['specchi', 'abs', 'filo', 'applique'],
     mobile:       ['mobili', 'bagno', 'classici', 'moderni'],
     mobilebagno:  ['mobili', 'bagno', 'arredo'],
+
+    // ── Utensileria / Attrezzi ────────────────────────────────
+    // Pinze (il catalogo usa "Pinza" al singolare: "Pinza universale", ecc.)
+    pinza:        ['pinze', 'pinzette', 'tronchese'],
+    pinze:        ['pinza', 'pinzette', 'tronchese'],
+    pinzette:     ['pinza', 'pinze', 'tronchese', 'morse'],
+    morse:        ['pinza', 'pinze', 'tronchese', 'morsa'],
+    morsa:        ['morse', 'morsetto', 'morsa'],
+    tronchese:    ['tronchesi', 'pinza', 'tagliaferro', 'taglio'],
+    tronchesi:    ['tronchese', 'pinza', 'taglio'],
+    forbici:      ['forbice', 'cesoie', 'tronchese'],
+    forbice:      ['forbici', 'cesoie'],
+    cesoie:       ['forbici', 'tronchese'],
+    chiave:       ['chiavi', 'brugola', 'esagonale', 'imbus'],
+    chiavi:       ['chiave', 'brugola', 'esagonale'],
+    brugola:      ['chiave', 'esagonale', 'imbus', 'chiavi'],
+    esagonale:    ['brugola', 'chiave', 'esagono', 'imbus'],
+    cacciavite:   ['cacciaviti', 'giravite', 'Phillips'],
+    cacciaviti:   ['cacciavite', 'giravite'],
+    giravite:     ['cacciavite', 'cacciaviti'],
+    martello:     ['mazza', 'maglio'],
+    mazza:        ['martello', 'maglio'],
+    sbavatore:    ['sbavatori', 'calibratore', 'sbavatura'],
+    sbavatori:    ['sbavatore', 'calibratore'],
+    tagliatubi:   ['taglio', 'tubi', 'cutter', 'taglierino'],
+    saldatura:    ['saldare', 'stagno', 'brasatura', 'disossidante'],
+    saldare:      ['saldatura', 'stagno', 'brasatura'],
+    stagno:       ['saldatura', 'saldare', 'lega', 'piombo'],
+    fresa:        ['frese', 'tazza', 'punte'],
+    frese:        ['fresa', 'punta', 'punte'],
+    silicone:     ['sigillante', 'sigillanti', 'soudal', 'henkel'],
+    sigillante:   ['silicone', 'sigillanti', 'canapa', 'teflon'],
+    sigillanti:   ['sigillante', 'silicone', 'soudal'],
 
     // ── Fumisteria / Gas ─────────────────────────────────────
     canna:        ['fumaria', 'fumisteria', 'tubo', 'inox'],
@@ -445,6 +483,24 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     climatizzatori: ['climatizzatori'],
     condizionatore: ['climatizzatori'],
     split:          ['climatizzatori'],
+
+    // ── Utensileria ───────────────────────────────────────────
+    pinza:       ['utensileria'],
+    pinze:       ['utensileria'],
+    pinzette:    ['utensileria'],
+    tronchese:   ['utensileria'],
+    chiave:      ['utensileria'],
+    chiavi:      ['utensileria'],
+    brugola:     ['utensileria'],
+    forbici:     ['utensileria'],
+    cacciavite:  ['utensileria'],
+    cacciaviti:  ['utensileria'],
+    martello:    ['utensileria'],
+    sbavatore:   ['utensileria'],
+    tagliatubi:  ['utensileria'],
+    saldatura:   ['utensileria', 'cannelli per saldatura'],
+    fresa:       ['utensileria'],
+    frese:       ['utensileria'],
 };
 
 // ─────────────────────────────────────────────
@@ -637,13 +693,19 @@ export interface ScoredProduct {
 /**
  * Calcola il punteggio totale di un prodotto per una lista di token di query.
  * Include:
- *  - AND logic (tutti i token devono matchare)
+ *  - AND logic (tutti i token devono matchare) oppure OR mode (almeno 1 token)
  *  - Bonus per match nel nome / categoria
  *  - Bonus per codice articolo
  *  - Sistema TIER: prodotto principale > accessorio > ricambio
  *  - Se l'utente cerca esplicitamente "ricambi" → tier ignorato
+ * @param orMode - Se true usa logica OR (almeno 1 token deve matchare)
  */
-function scoreProduct(product: Product, queryTokens: string[], queryIntent: 'main' | 'accessory' | 'spare'): number {
+function scoreProduct(
+    product: Product,
+    queryTokens: string[],
+    queryIntent: 'main' | 'accessory' | 'spare',
+    orMode = false,
+): number {
     // Prepara i campi del prodotto normalizzati
     const idText = normalize(String(product.id));
     const nameText = normalize(product.name);
@@ -660,7 +722,7 @@ function scoreProduct(product: Product, queryTokens: string[], queryIntent: 'mai
     };
 
     let totalScore = 0;
-    let allTokensMatched = true;
+    let matchedTokens = 0;
 
     for (const token of queryTokens) {
         let bestTokenScore = 0;
@@ -671,16 +733,24 @@ function scoreProduct(product: Product, queryTokens: string[], queryIntent: 'mai
             if (s > bestTokenScore) bestTokenScore = s;
         }
 
-        // Logica AND: se un token non matcha da nessuna parte → prodotto escluso
         if (bestTokenScore === 0) {
-            allTokensMatched = false;
-            break;
+            // AND mode: se un token non matcha → prodotto escluso subito
+            if (!orMode) return 0;
+            // OR mode: token non matcha ma continuiamo
+        } else {
+            totalScore += bestTokenScore;
+            matchedTokens++;
         }
-
-        totalScore += bestTokenScore;
     }
 
-    if (!allTokensMatched) return 0;
+    // OR mode: almeno 1 token deve matchare
+    if (orMode && matchedTokens === 0) return 0;
+
+    // In OR mode: penalità proporzionale ai token non matchati
+    // (es. 2 token su 3 = 66%, penalità 33%)
+    if (orMode && matchedTokens < queryTokens.length) {
+        totalScore = Math.round(totalScore * (matchedTokens / queryTokens.length) * 0.7);
+    }
 
     // ── BONUS BASE ───────────────────────────────────────────
     // Bonus se TUTTI i token matchano nel solo campo nome
@@ -750,6 +820,7 @@ export function smartSearch(products: Product[], query: string): Product[] {
 
     const queryIntent = detectQueryIntent(queryTokens);
 
+    // Prima prova con logica AND (tutti i token devono matchare)
     const scored: ScoredProduct[] = products
         .map(product => ({
             product,
@@ -759,7 +830,25 @@ export function smartSearch(products: Product[], query: string): Product[] {
 
     scored.sort((a, b) => b.score - a.score);
 
-    return scored.map(sp => sp.product);
+    if (scored.length > 0) {
+        return scored.map(sp => sp.product);
+    }
+
+    // Fallback OR: se AND non produce risultati con query multi-token,
+    // almeno un token deve matchare (con penalità sul punteggio)
+    if (queryTokens.length > 1) {
+        const scoredOR: ScoredProduct[] = products
+            .map(product => ({
+                product,
+                score: scoreProduct(product, queryTokens, queryIntent, true),
+            }))
+            .filter(sp => sp.score > 0);
+
+        scoredOR.sort((a, b) => b.score - a.score);
+        return scoredOR.map(sp => sp.product);
+    }
+
+    return [];
 }
 
 /**
