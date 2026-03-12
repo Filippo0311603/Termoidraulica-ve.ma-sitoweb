@@ -191,8 +191,8 @@ const SYNONYMS: Record<string, string[]> = {
     braccio:         ['bracci doccia', 'soffione'],
     sgabello:        ['sgabelli doccia', 'durolite'],
     'presa acqua':   ['prese acqua', 'duplex', 'rubinetto'],
-    'ruba acqua':    ['prese acqua', 'presa acqua', 'duplex'],
-    rubaacqua:       ['prese acqua', 'presa acqua', 'duplex'],
+    'ruba acqua':    ['rapida', 'collare', 'ottone'],
+    rubaacqua:       ['rapida', 'collare', 'ottone'],
     presa:           ['prese acqua', 'presa acqua', 'duplex'],
 
     // ════════════════════════════════════════════════════════════
@@ -679,7 +679,8 @@ const INTENT_PRIMARY_CATS: Record<string, string[]> = {
     sgabello:    ['sgabelli doccia'],
     presa:       ['prese acqua'],
     'presa acqua': ['prese acqua'],
-    'ruba acqua':  ['prese acqua'],
+    'ruba acqua':  ['collari di riparazione'],
+    rubaacqua:     ['collari di riparazione'],
     duplex:      ['prese acqua', 'pannelli doccia'],
 
     // ── Cassette ─────────────────────────────────────────────
